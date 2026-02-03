@@ -223,7 +223,7 @@ export function Projects() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <a
-                  href="https://github.com/mbanonna"
+                  href="https://github.com/Mba205"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group px-6 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-600 transition-all flex items-center gap-2"
