@@ -94,7 +94,7 @@ export function Contact() {
     {
       icon: Github,
       label: 'GitHub',
-      href: 'https://github.com/mbanonna',
+      href: 'https://github.com/Mba205',
       color: 'hover:text-orange-400',
     },
     {
