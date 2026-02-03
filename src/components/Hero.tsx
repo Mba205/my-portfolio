@@ -122,7 +122,7 @@ export function Hero() {
             className="flex items-center justify-center gap-6 pt-8"
           >
             <a
-              href="https://github.com/mbanonna"
+              href="https://github.com/Mba205"
               target="_blank"
               rel="noopener noreferrer"
               className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
