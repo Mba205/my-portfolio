@@ -65,11 +65,11 @@ export function Projects() {
     },
     {
       title: 'Enterprise Security Audit & Compliance',
-      description: 'Comprehensive security audit for a financial organization, identifying vulnerabilities and compliance gaps. Delivered detailed risk assessments aligned with NIST, ISO 27001, and SOC 2 frameworks.',
+      description: 'Comprehensive enterprise security audit assessing Microsoft Exchange and VPN infrastructure, identifying risks and compliance gaps. Delivered detailed risk-based assessments aligned with NIST, ISO 27001, and SOC 2 frameworks.',
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['NIST Framework', 'ISO 27001', 'Risk Assessment', 'SOC 2'],
       icon: FileCheck,
-      github: '', // Leave empty - audit work doesn't have code repos
+      github: 'https://github.com/Mba205/enterprise-security-audit-compliance',
       demo: '', // Add link to case study or sanitized report (optional)
       color: 'from-indigo-500 to-blue-500',
     },
