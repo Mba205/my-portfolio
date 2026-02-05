@@ -19,7 +19,7 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1653213096273-4a0ba43fc50a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzZWN1cml0eSUyMGF1ZGl0JTIwZG9jdW1lbnR8ZW58MXx8fHwxNzY0Njk0MjQyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Splunk', 'ELK Stack', 'Python', 'Threat Intelligence'],
       icon: Shield,
-      github: '', // Add your GitHub repo URL here (optional)
+      github: 'https://github.com/Mba205/siem-threat-detection-system', //GitHub repo URL
       demo: '', // Add link to writeup, demo, or case study
       color: 'from-cyan-500 to-blue-500',
     },
