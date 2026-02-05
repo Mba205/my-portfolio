@@ -70,7 +70,7 @@ export function Projects() {
       tech: ['NIST Framework', 'ISO 27001', 'Risk Assessment', 'SOC 2'],
       icon: FileCheck,
       github: 'https://github.com/Mba205/enterprise-security-audit-compliance',
-      demo: '', // Add link to case study or sanitized report (optional)
+      demo: 'https://drive.google.com/drive/folders/1_ZEPm2_vmTC6qV009_CDfeXXshnPfkQa?usp=sharing', 
       color: 'from-indigo-500 to-blue-500',
     },
   ];
