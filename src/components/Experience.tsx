@@ -54,9 +54,9 @@ export function Experience() {
     {
       type: 'work',
       title: 'GRC & IT Audit Associate',
-      organization: 'Compliance Partners LLC',
-      location: 'Miami, OH',
-      period: 'May 2023 - Aug 2023',
+      organization: 'Yesyoucan Cybersecure LLC',
+      location: 'Remote, Dallas, USA',
+      period: 'Feb 2025 - Jun 2025',
       description: [
         'Conducted security audits and compliance assessments against NIST, ISO 27001, and SOC 2 frameworks',
         'Performed risk assessments and developed risk remediation plans for organizational vulnerabilities',
