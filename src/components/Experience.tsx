@@ -55,7 +55,7 @@ export function Experience() {
       type: 'work',
       title: 'GRC & IT Audit Associate',
       organization: 'Yesyoucan Cybersecure LLC',
-      location: 'Remote, Dallas, USA',
+      location: 'Remote, Dallas',
       period: 'Feb 2025 - Jun 2025',
       description: [
         'Conducted security audits and compliance assessments against NIST, ISO 27001, and SOC 2 frameworks',
