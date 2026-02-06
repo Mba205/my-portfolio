@@ -79,8 +79,8 @@ export function Contact() {
     {
       icon: Phone,
       label: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567',
+      value: '+233 20 733 7049',
+      href: 'tel:+233 20 733 7049',
     },
     {
       icon: MapPin,
