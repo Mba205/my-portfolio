@@ -311,7 +311,7 @@ export function Experience() {
                   </li>
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
-                    Published research on IoT security vulnerabilities
+                    Published research on cloud security misconfigurations
                   </li>
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
