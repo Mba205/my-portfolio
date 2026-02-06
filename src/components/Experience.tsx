@@ -14,7 +14,7 @@ export function Experience() {
       title: 'Cybersecurity Analyst',
       organization: 'SecureNet Solutions',
       location: 'Remote',
-      period: 'Jun 2024 - Present',
+      period: 'Oct 2025 - Dec 2025',
       description: [
         'Monitor security events and investigate potential threats using SIEM platforms (Splunk, ELK)',
         'Perform threat hunting activities and analyze security logs to identify malicious activity',
@@ -28,7 +28,7 @@ export function Experience() {
       title: 'Cybersecurity Engineer',
       organization: 'TechDefense Corp',
       location: 'New York, NY',
-      period: 'Jan 2024 - May 2024',
+      period: 'Jan 2025 - May 2025',
       description: [
         'Designed and implemented security automation solutions using Python and security orchestration tools',
         'Built custom security tools and scripts for vulnerability scanning and threat detection',
@@ -42,7 +42,7 @@ export function Experience() {
       title: 'Cloud Security Specialist',
       organization: 'CloudGuard Technologies',
       location: 'Remote',
-      period: 'Sep 2023 - Dec 2023',
+      period: 'Sep 2024 - Dec 2024',
       description: [
         'Implemented security controls for AWS and Azure cloud environments using IAM, VPC, and security groups',
         'Configured and managed cloud security tools including AWS GuardDuty, Security Hub, and CloudTrail',
