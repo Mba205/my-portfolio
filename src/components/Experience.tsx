@@ -11,10 +11,10 @@ export function Experience() {
   const experiences = [
     {
       type: 'work',
-      title: 'Cybersecurity Analyst',
-      organization: 'SecureNet Solutions',
-      location: 'Remote',
-      period: 'Oct 2025 - Dec 2025',
+      title: 'Cybersecurity Analyst Intern',
+      organization: 'KPMG',
+      location: 'Ghana',
+      period: 'Sept 2025 - Nov 2025',
       description: [
         'Monitor security events and investigate potential threats using SIEM platforms (Splunk, ELK)',
         'Perform threat hunting activities and analyze security logs to identify malicious activity',
@@ -36,6 +36,7 @@ export function Experience() {
         'Developed and maintained security infrastructure including firewalls, IDS/IPS, and EDR solutions',
       ],
       color: 'from-emerald-500 to-teal-500',
+      visible: false, // hidden for now
     },
     {
       type: 'work',
@@ -50,6 +51,7 @@ export function Experience() {
         'Designed secure cloud architectures following CIS benchmarks and cloud security best practices',
       ],
       color: 'from-orange-500 to-red-500',
+      visible: false, // hidden for now
     },
     {
       type: 'work',
