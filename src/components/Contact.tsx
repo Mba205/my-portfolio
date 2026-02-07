@@ -85,7 +85,7 @@ export function Contact() {
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Case Western Reserve University, Cleaveland, OH',
+      value: 'Accra, Ghana',
       href: null,
     },
   ];
