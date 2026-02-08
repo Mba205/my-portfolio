@@ -22,6 +22,7 @@ export function Experience() {
         'Respond to security incidents and coordinate remediation efforts with cross-functional teams',
       ],
       color: 'from-cyan-500 to-blue-500',
+      visible: true, // show
     },
     {
       type: 'work',
@@ -66,6 +67,7 @@ export function Experience() {
         'Assisted in compliance reporting and collaborated with stakeholders on remediation initiatives',
       ],
       color: 'from-purple-500 to-pink-500',
+      visible: true, // show
     },
   ];
 
