@@ -79,6 +79,7 @@ export function Experience() {
       date: 'Jan 2026',
       color: 'emerald',
       certificateUrl: 'https://learn.mastermindassurance.com/certificates/onzapcg9q8',
+      visible: true, // ✅ show
     },
     {
       name: 'ISC2 Certified in Cybersecurity',
