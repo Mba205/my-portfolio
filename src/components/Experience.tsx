@@ -182,7 +182,7 @@ export function Experience() {
                     <motion.div
                       key={exp.title}
                       initial={{ opacity: 0, x: -30 }}
-                      animate={inView ? { opacity: 1, x: 0 } : {}}
+                      animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.2 }}
                       className="relative pl-8"
                     >
