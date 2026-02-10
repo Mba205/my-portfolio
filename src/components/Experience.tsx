@@ -223,11 +223,60 @@ export function Experience() {
               </div>
             </div>
 
-            {/* Certifications unchanged */}
-            {/* (rest of your code stays exactly the same) */}
+           {/* Certifications */}
+<div>
+  <h3 className="flex items-center gap-2 text-2xl text-slate-100 mb-8">
+    <Award className="w-6 h-6 text-cyan-400" />
+    Certifications & Learning
+  </h3>
+
+  {/* Quick debug check */}
+  <p className="text-white mb-4">
+    CERTS DEBUG – IF YOU SEE THIS, SECTION IS RENDERING
+  </p>
+
+  <div className="space-y-4">
+    {certifications.map((cert, index) => {
+      const CertContent = (
+        <motion.div
+          key={cert.name}
+          initial={{ opacity: 0, x: 30 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.5, delay: index * 0.15 }}
+          className="group p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h4 className="text-sm text-slate-100 group-hover:text-cyan-400 transition-colors mb-1">
+                {cert.name}
+              </h4>
+              <p className="text-xs text-slate-400 mb-2">{cert.issuer}</p>
+              <div className="flex items-center gap-2 text-xs">
+                <Calendar className="w-3 h-3 text-cyan-400" />
+                <span className="text-slate-400">{cert.date}</span>
+              </div>
+            </div>
+
+            <span className="text-xs text-slate-400">
+              {cert.status}
+            </span>
           </div>
         </motion.div>
-      </div>
-    </section>
-  );
-}
+      );
+
+      return cert.certificateUrl ? (
+        <a
+          key={cert.name}
+          href={cert.certificateUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
+          {CertContent}
+        </a>
+      ) : (
+        CertContent
+      );
+    })}
+  </div>
+</div>
