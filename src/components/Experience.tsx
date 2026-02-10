@@ -68,7 +68,7 @@ export function Experience() {
     {
       name: 'ISC2 Certified in Cybersecurity',
       issuer: 'ISC2',
-      status: 'Completed',
+      status: 'Planned',
       date: 'Apr 2026',
       certificateUrl: '',
     },
@@ -139,10 +139,6 @@ export function Experience() {
                 <Award className="w-6 h-6 text-cyan-400" />
                 Certifications & Learning
               </h3>
-
-              <p className="text-green-400 mb-4">
-                ✅ CERTIFICATIONS SECTION IS RENDERING
-              </p>
 
               <div className="space-y-4">
                 {certifications.map(cert => (
