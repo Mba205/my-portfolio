@@ -166,7 +166,7 @@ export function Experience() {
             <div className="mt-4 h-1 w-24 bg-gradient-to-r from-cyan-500 to-emerald-500 mx-auto rounded-full" />
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
               <h3 className="flex items-center gap-2 text-2xl text-slate-100 mb-8">
                 <Briefcase className="w-6 h-6 text-cyan-400" />
