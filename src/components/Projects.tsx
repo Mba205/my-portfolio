@@ -15,9 +15,9 @@ export function Projects() {
   const projects = [
     {
       title: 'SIEM Threat Detection System',
-      description: 'Enterprise-grade SIEM implementation with custom correlation rules for advanced threat detection. Integrated log aggregation from 50+ sources with real-time alerting and automated incident triage.',
+      description: 'Designed and deployed a cloud-based SIEM lab using Elastic Security and Python to simulate real-world SOC operations. Built authentication log ingestion, KQL based brute-force detection rules and investigative dashboards for alert triage.',
       image: 'https://images.unsplash.com/photo-1653213096273-4a0ba43fc50a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzZWN1cml0eSUyMGF1ZGl0JTIwZG9jdW1lbnR8ZW58MXx8fHwxNzY0Njk0MjQyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['Splunk', 'ELK Stack', 'Python', 'Threat Intelligence'],
+      tech: ['Elastic Security', 'Elasticsearch', 'Kibana', 'Python', 'KQL','Detection Engineering'],
       icon: Shield,
       github: 'https://github.com/Mba205/siem-threat-detection-system', //GitHub repo URL
       demo: '', // Add link to writeup, demo, or case study
