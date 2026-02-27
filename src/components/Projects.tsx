@@ -20,7 +20,7 @@ export function Projects() {
       tech: ['Elastic Security', 'Elasticsearch', 'Kibana', 'Python', 'KQL','Detection Engineering'],
       icon: Shield,
       github: 'https://github.com/Mba205/siem-threat-detection-system', //GitHub repo URL
-      demo: '', // Add link to writeup, demo, or case study
+      demo: 'https://drive.google.com/drive/folders/1KlRFmTyGIBf7vuMndxgPS86sSGM2CkTX?usp=sharing', // Add link to writeup, demo, or case study
       color: 'from-cyan-500 to-blue-500',
     },
     {
