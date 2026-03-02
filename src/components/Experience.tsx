@@ -81,7 +81,7 @@ export function Experience() {
       certificateUrl: '', // Add your certificate URL here when available
     },
     {
-      name: 'Cisco CCNA',
+      name: 'CCNA',
       issuer: 'Cisco',
       status: 'Planned',
       date: 'Planned',
