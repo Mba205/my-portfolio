@@ -57,14 +57,6 @@ export function Experience() {
       certificateUrl: 'https://learn.mastermindassurance.com/certificates/onzapcg9q8',
     },
     {
-      name: 'CompTIA Network+',
-      issuer: 'CompTIA',
-      status: 'Planned',
-      date: 'Planned',
-      color: 'purple',
-      certificateUrl: '', // Add your certificate URL here when available
-    },
-    {
       name: 'CompTIA Security+',
       issuer: 'CompTIA',
       status: 'Planned',
@@ -77,7 +69,7 @@ export function Experience() {
       issuer: 'CompTIA',
       status: 'Planned',
       date: 'Planned',
-      color: 'orange',
+      color: 'purple',
       certificateUrl: '', // Add your certificate URL here when available
     },
     {
@@ -86,6 +78,14 @@ export function Experience() {
       status: 'Planned',
       date: 'Planned',
       color: 'blue',
+      certificateUrl: '', // Add your certificate URL here when available
+    },
+    {
+      name: 'AWS Certified Solutions Architect - Associate',
+      issuer: 'Amazon Web Services',
+      status: 'Planned',
+      date: 'Planned',
+      color: 'yellow',
       certificateUrl: '', // Add your certificate URL here when available
     },
     {
