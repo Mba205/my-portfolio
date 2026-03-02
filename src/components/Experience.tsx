@@ -57,30 +57,6 @@ export function Experience() {
       certificateUrl: 'https://learn.mastermindassurance.com/certificates/onzapcg9q8',
     },
     {
-      name: 'ISC2 Certified in Cybersecurity',
-      issuer: 'ISC2',
-      status: 'Planned',
-      date: 'Apr 2026',
-      color: 'cyan',
-      certificateUrl: '', // Add your certificate URL here when available
-    },
-    {
-      name: 'Google Cybersecurity Professional Certificate',
-      issuer: 'Google / Coursera',
-      status: 'Planned',
-      date: 'Planned',
-      color: 'blue',
-      certificateUrl: '', // Add your certificate URL here when available
-    },
-    {
-      name: 'CompTIA A+',
-      issuer: 'CompTIA',
-      status: 'Planned',
-      date: 'Planned',
-      color: 'emerald',
-      certificateUrl: '', // Add your certificate URL here when available
-    },
-    {
       name: 'CompTIA Network+',
       issuer: 'CompTIA',
       status: 'Planned',
