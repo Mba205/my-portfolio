@@ -180,7 +180,7 @@ export function Experience() {
             <div>
               <h3 className="flex items-center gap-2 text-2xl text-slate-100 mb-8">
                 <Award className="w-6 h-6 text-cyan-400" />
-                Certifications & Learning
+                Professional Certifications Roadmap
               </h3>
 
               <div className="space-y-4">
