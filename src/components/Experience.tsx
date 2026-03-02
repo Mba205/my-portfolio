@@ -60,7 +60,7 @@ export function Experience() {
       name: 'CompTIA Security+',
       issuer: 'CompTIA',
       status: 'Planned',
-      date: 'Planned',
+      date: 'In Progress',
       color: 'cyan',
       certificateUrl: '', // Add your certificate URL here when available
     },
@@ -92,7 +92,7 @@ export function Experience() {
       name: 'AWS Certified Security - Specialty',
       issuer: 'Amazon Web Services',
       status: 'Planned',
-      date: 'Planned',
+      date: 'Long Term Goal',
       color: 'orange',
       certificateUrl: '', // Add your certificate URL here when available
     },
