@@ -29,7 +29,7 @@ export function Experience() {
     },
     {
       type: 'work',
-      title: 'GRC Analyst',
+      title: 'GRC Analyst Intern',
       organization: 'Accenture',
       location: 'Global Consulting Environment',
       period: 'Jan 2024 - Oct 2024',
