@@ -87,7 +87,7 @@ export function About() {
 
               {/* Download Resume Button */}
               <motion.a
-                href="/MBA_NONNA_RESUME.pdf"
+                href="/MBA_NONNA_RESUME.pd"
                 download
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
