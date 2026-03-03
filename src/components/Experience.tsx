@@ -10,7 +10,7 @@ export function Experience() {
 
   const experiences = [
     {
-      type: 'work',
+      type: 'Part-Time',
       title: 'IT Compliance Analyst',
       organization: 'Astreya',
       location: 'Global • Remote',
