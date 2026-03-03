@@ -14,7 +14,7 @@ export function Experience() {
       title: 'IT Compliance Analyst',
       organization: 'Astreya',
       location: 'Global • Remote',
-      period: 'Jan 2022 - Sept 2025',
+      period: 'Dec 2024 - Jan 2026',
       description: [
         'Supported global IT compliance and governance across enterprise cloud and infrastructure environments aligned with ISO 27001, SOC 2, SOX 404, and NIST controls',
         'Performed IT General Controls (ITGC) testing including access management, change management, incident management, and logical security controls to strengthen audit readiness',
@@ -32,7 +32,7 @@ export function Experience() {
       title: 'GRC Analyst',
       organization: 'Accenture',
       location: 'Global Consulting Environment',
-      period: 'Nov 2019 - Dec 2021',
+      period: 'Jan 2024 - Oct 2024',
       description: [
         'Supported GRC initiatives for global clients across financial services, healthcare, and technology, aligned to ISO/IEC 27001, NIST 800-53, COBIT, SOX 404, HIPAA, and SOC 2',
         'Conducted enterprise risk assessments and control gap analyses, identifying high-risk exposures and recommending remediation strategies to reduce audit findings',
