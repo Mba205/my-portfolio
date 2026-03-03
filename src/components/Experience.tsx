@@ -10,8 +10,8 @@ export function Experience() {
 
   const experiences = [
     {
-      type: 'Part-Time',
-      title: 'IT Compliance Analyst',
+      type: 'work',
+      title: 'IT Compliance Analyst (Part-Time)',
       organization: 'Astreya',
       location: 'Global • Remote',
       period: 'Dec 2024 - Jan 2026',
@@ -32,7 +32,7 @@ export function Experience() {
       title: 'GRC Analyst Intern',
       organization: 'Accenture',
       location: 'Global Consulting Environment',
-      period: 'Jan 2024 - Oct 2024',
+      period: 'August 2024 - Oct 2024',
       description: [
         'Supported GRC initiatives for global clients across financial services, healthcare, and technology, aligned to ISO/IEC 27001, NIST 800-53, COBIT, SOX 404, HIPAA, and SOC 2',
         'Conducted enterprise risk assessments and control gap analyses, identifying high-risk exposures and recommending remediation strategies to reduce audit findings',
