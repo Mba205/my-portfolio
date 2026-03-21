@@ -39,8 +39,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1613677135043-a2512fbf49fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxweXRob24lMjBjb2RlJTIwdGVybWluYWx8ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Python', 'Git', 'JSON', 'Security Automation', 'Threat Intelligence APIs', 'Network Security'],
       icon: Terminal,
-      github: 'https://github.com/Mba205/security-automation-toolkit', // Add your GitHub repo URL
-      demo: '', // Add link to demo or documentation
+      github: 'https://github.com/Mba205/security-automation-toolkit', // GitHub repo URL
+      demo: 'https://drive.google.com/drive/folders/1m85JJ4y_ttHowUYmYyyjgti_tQjZkCCn?usp=sharing', // link documentation
       color: 'from-emerald-500 to-teal-500',
     },
     {
