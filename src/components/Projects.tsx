@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Github, ExternalLink, Shield, FileSearch, Terminal, Cloud, Lock, FileCheck } from 'lucide-react';
+import { Github, ExternalLink, Shield, FileSearch, Terminal, Cloud, Network, Lock, FileCheck } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState } from 'react';
 
