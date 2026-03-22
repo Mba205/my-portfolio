@@ -25,9 +25,9 @@ export function Projects() {
     },
     {
       title: 'Cloud Security Operations & Governance Lab',
-      description: 'Designed and implemented secure multi-tier cloud architecture on AWS with automated security controls, IAM policies, VPC segmentation, and comprehensive monitoring using AWS Security Hub and GuardDuty.',
+      description: 'Built and secured AWS cloud infrastructure to simulate real-world environments. Identified and remediated security misconfigurations in IAM, storage and compute resources while implementing logging, montoring and access controls aligned with security best practices.',
       image: 'https://images.unsplash.com/photo-1664526937033-fe2c11f1be25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXR3b3JrJTIwZGlhZ3JhbSUyMGNsb3VkfGVufDF8fHx8MTc2NDY5NDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['AWS Config Rule Violations', 'CloudTrail Monitoring', 'GuardDuty', 'IAM'],
+      tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security & Governance', 'Risk & Misconfiguration Analysis', 'Access Control & Logging'],
       icon: Network,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to architecture diagram or case study
