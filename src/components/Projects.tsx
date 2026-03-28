@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
-import { Github, ExternalLink, Shield, FileSearch, Terminal, Cloud, Network, Lock, FileCheck } from 'lucide-react';
+import { Github, ExternalLink, Shield, FileSearch, Terminal, Cloud, Network, Lock, FileCheck, Code } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useState } from 'react';
 
@@ -54,11 +54,11 @@ export function Projects() {
       color: 'from-purple-500 to-pink-500',
     },
     {
-      title: 'Penetration Testing Lab Environment',
-      description: 'Comprehensive home lab environment for practicing ethical hacking and red team techniques. Includes vulnerable machines, CTF challenges, and detailed writeups of exploitation methods and security findings.',
-      image: 'https://images.unsplash.com/photo-1655036387197-566206c80980?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYWNraW5nJTIwbGFiJTIwY29tcHV0ZXJ8ZW58MXx8fHwxNzY0Njk0MjQ1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['Kali Linux', 'Metasploit', 'Burp Suite', 'HackTheBox'],
-      icon: Lock,
+      title: 'Secure Infrastructure as Code (Terraform)',
+      description: 'Provisioned and secured AWS infrastructure using Terraform, defining VPCs, EC2 instances and security groups as code. Applied secure configurations and access controls to prevent common cloud misconfigurations.',
+      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RlJTIwdGVybWluYWwlMjBzY3JlZW58ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      tech: ['Terraform', 'Infrastructure as Code (IaC)', 'AWS', 'IAM', 'Security Groups', 'Cloud Security', 'Network Security'],
+      icon: Code,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to writeups or blog
       color: 'from-green-500 to-emerald-500',
