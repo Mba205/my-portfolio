@@ -117,7 +117,7 @@ export function About() {
                 </div>
 
                 <p className="text-lg leading-relaxed">
-                  I am working toward a career as a cybersecurity analyst and engineer with a strong focus on cloud security. What drives me is analyzing how modern systems are built, where risk is introduced and how security can be intentionally engineered into cloud environments before vulnerabilities become incidents.
+                  I am working toward a career as a cybersecurity engineer with a strong focus on cloud security. What drives me is analyzing how modern systems are built, where risk is introduced and how security can be intentionally engineered into cloud environments before vulnerabilities become incidents.
                 </p>
 
                 <p className="text-lg leading-relaxed">
