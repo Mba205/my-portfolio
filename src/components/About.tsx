@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 import { Shield, Lock, Database, Cloud, Terminal, Network, Download } from 'lucide-react';
-import profilePhoto from 'figma:asset/b3329f9417ce87c8988e6b38aac0b2095b41537b.png';
+import profilePhoto from 'https://github.com/Mba205/my-portfolio/blob/main/src/assets/IMG_6446.PNG';
 
 export function About() {
   const [ref, inView] = useInView({
