@@ -44,7 +44,7 @@ export function Projects() {
       color: 'from-emerald-500 to-teal-500',
     },
     {
-      title: 'Security Automation & SOAR Platform',
+      title: 'IAM Security & Privilege Escalation Lab',
       description: 'Built automated security orchestration platform for incident response workflows. Integrates with ticketing systems, EDR tools, and threat intelligence feeds for automated threat remediation.',
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Python', 'REST APIs', 'Ansible', 'Security Orchestration'],
@@ -64,13 +64,13 @@ export function Projects() {
       color: 'from-green-500 to-emerald-500',
     },
     {
-      title: 'Enterprise Security Audit & Compliance',
+      title: 'Network Security Analysis',
       description: 'Comprehensive enterprise security audit assessing Microsoft Exchange and VPN infrastructure, identifying risks and compliance gaps. Delivered detailed risk-based assessments aligned with NIST, ISO 27001, and SOC 2 frameworks.',
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['NIST Framework', 'ISO 27001', 'Risk Assessment', 'SOC 2'],
+      tech: ['Wireshark', 'Zeek'],
       icon: FileCheck,
-      github: 'https://github.com/Mba205/enterprise-security-audit-compliance',
-      demo: 'https://drive.google.com/drive/folders/1_ZEPm2_vmTC6qV009_CDfeXXshnPfkQa?usp=sharing', 
+      github: '', // GitHub repo URL
+      demo: '', // google drive link
       color: 'from-indigo-500 to-blue-500',
     },
   ];
