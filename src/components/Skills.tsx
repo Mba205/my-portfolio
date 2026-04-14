@@ -13,6 +13,8 @@ import {
   Code,
   Server,
   GitBranch,
+  Cpu,
+  Key,
 } from 'lucide-react';
 
 export function Skills() {
@@ -23,94 +25,105 @@ export function Skills() {
 
   const skillCategories = [
     {
-      title: 'Governance, Risk & Compliance',
-      icon: Shield,
-      color: 'from-cyan-500 to-blue-500',
+      title: 'Cloud Security',
+      icon: Cloud,
+      color: 'from-cyan-500 to-blue-600',
       skills: [
-        'Risk Assessment & Management',
-        'NIST Cybersecurity Framework',
-        'ISO 27001/27002',
-        'SOC 2 Compliance',
-        'Policy Development',
-        'Security Auditing',
+        'AWS Security Services (GuardDuty, CloudTrail, Config)',
+        'IAM — Policies, Roles & Permission Boundaries',
+        'Privilege Escalation Detection & Remediation',
+        'Cloud Misconfiguration Analysis',
+        'Infrastructure as Code Security (Terraform)',
+        'VPC Design & Access Control',
+      ],
+    },
+    {
+      title: 'Security Engineering',
+      icon: Shield,
+      color: 'from-emerald-500 to-teal-600',
+      skills: [
+        'SIEM Design & Detection Engineering',
+        'Threat Detection Rule Development (KQL)',
+        'Alert Triage & Incident Response Workflows',
+        'Security Automation (Python)',
+        'Vulnerability Assessment',
+        'MITRE ATT&CK Framework',
       ],
     },
     {
       title: 'Network Security',
       icon: Network,
-      color: 'from-emerald-500 to-teal-500',
+      color: 'from-violet-500 to-purple-600',
       skills: [
-        'Firewall Configuration',
-        'IDS/IPS Management',
-        'VPN Implementation',
+        'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
+        'Intrusion Detection & Anomaly Detection',
+        'TCP/IP & DNS Protocol Analysis',
+        'C2 Communication Pattern Detection',
+        'Firewall & IDS Rule Development',
         'Network Segmentation',
-        'Packet Analysis (Wireshark)',
-        'TCP/IP Protocol Suite',
       ],
     },
     {
-      title: 'Vulnerability Management',
-      icon: AlertTriangle,
+      title: 'Security Automation & Scripting',
+      icon: Code,
       color: 'from-orange-500 to-red-500',
       skills: [
-        'Vulnerability Scanning (Nessus)',
-        'Penetration Testing Basics',
-        'OWASP Top 10',
-        'Security Assessment',
-        'Exploit Analysis',
-        'Remediation Planning',
+        'Python — Security Tooling & Automation',
+        'IP Intelligence Enrichment via Threat APIs',
+        'Structured JSON Reporting Pipelines',
+        'Bash Scripting & CLI Tooling',
+        'AWS CLI for Security Operations',
+        'Git Version Control',
       ],
     },
     {
-      title: 'Cloud Security',
-      icon: Cloud,
-      color: 'from-purple-500 to-pink-500',
+      title: 'Governance, Risk & Compliance',
+      icon: FileCheck,
+      color: 'from-amber-500 to-orange-500',
       skills: [
-        'AWS Security Services',
-        'Azure Security Center',
-        'IAM & Access Control',
-        'Cloud Compliance',
-        'Container Security',
-        'Cloud Architecture',
+        'NIST Cybersecurity Framework',
+        'ISO 27001:2022 (Lead Auditor Certified)',
+        'SOC 2 Compliance',
+        'HIPAA & GDPR',
+        'ITGC Testing & SOX 404',
+        'Third-Party Risk Management',
       ],
     },
     {
-      title: 'Linux / Windows Administration',
-      icon: Terminal,
-      color: 'from-green-500 to-emerald-500',
+      title: 'Systems & Infrastructure',
+      icon: Server,
+      color: 'from-slate-500 to-slate-600',
       skills: [
         'Linux System Administration',
-        'Windows Server Management',
-        'Active Directory',
-        'PowerShell Scripting',
-        'Bash Scripting',
+        'Windows Server & Active Directory',
         'System Hardening',
-      ],
-    },
-    {
-      title: 'Audit & Documentation',
-      icon: FileCheck,
-      color: 'from-indigo-500 to-purple-500',
-      skills: [
-        'Security Audit Planning',
-        'Evidence Collection',
-        'Technical Documentation',
-        'Incident Reports',
-        'Compliance Mapping',
-        'Security Metrics',
+        'Bash & PowerShell Scripting',
+        'Log Analysis & SIEM Integration',
+        'Endpoint Security Fundamentals',
       ],
     },
   ];
 
   const tools = [
-    { name: 'Nessus', icon: AlertTriangle },
+    { name: 'Elastic Security', icon: Shield },
     { name: 'Wireshark', icon: Network },
-    { name: 'Metasploit', icon: Terminal },
-    { name: 'Burp Suite', icon: Lock },
-    { name: 'Nmap', icon: Server },
-    { name: 'Splunk', icon: Database },
+    { name: 'Zeek', icon: Network },
+    { name: 'Terraform', icon: Code },
+    { name: 'AWS CLI', icon: Cloud },
     { name: 'Python', icon: Code },
+    { name: 'CloudTrail', icon: Database },
+    { name: 'GuardDuty', icon: AlertTriangle },
+    { name: 'Splunk', icon: Database },
+    { name: 'Nmap', icon: Server },
     { name: 'Git', icon: GitBranch },
+    { name: 'Kibana', icon: Database },
+  ];
+
+  const competencies = [
+    { icon: Cloud, label: 'Cloud Security Architecture', color: 'text-cyan-400' },
+    { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-emerald-400' },
+    { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-violet-400' },
+    { icon: Shield, label: 'Incident Response', color: 'text-orange-400' },
   ];
 
   return (
@@ -128,7 +141,7 @@ export function Skills() {
               Technical Skills
             </h2>
             <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
-              Comprehensive expertise across cybersecurity domains, from governance to technical implementation.
+              Hands-on expertise across cloud security, security engineering, and automation — built through real projects and professional experience.
             </p>
             <div className="mt-4 h-1 w-24 bg-gradient-to-r from-cyan-500 to-emerald-500 mx-auto rounded-full" />
           </div>
@@ -154,7 +167,7 @@ export function Skills() {
                   </h3>
                 </div>
 
-                {/* Skills List - Simple text items */}
+                {/* Skills List */}
                 <ul className="space-y-2">
                   {category.skills.map((skill, skillIndex) => (
                     <motion.li
@@ -201,19 +214,14 @@ export function Skills() {
             </div>
           </motion.div>
 
-          {/* Additional Competencies */}
+          {/* Core Competencies */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.8 }}
             className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {[
-              { icon: CheckCircle, label: 'Security Best Practices', color: 'text-cyan-400' },
-              { icon: Lock, label: 'Encryption & Cryptography', color: 'text-emerald-400' },
-              { icon: Database, label: 'SIEM & Log Analysis', color: 'text-purple-400' },
-              { icon: Shield, label: 'Incident Response', color: 'text-orange-400' },
-            ].map((item, index) => (
+            {competencies.map((item, index) => (
               <motion.div
                 key={item.label}
                 initial={{ opacity: 0, y: 20 }}
