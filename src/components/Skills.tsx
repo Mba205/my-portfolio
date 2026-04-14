@@ -92,7 +92,7 @@ export function Skills() {
     {
       title: 'Systems & Infrastructure',
       icon: Server,
-      color: 'from-slate-500 to-slate-600',
+      color: 'from-green-500 to-emerald-500',
       skills: [
         'Linux System Administration',
         'Windows Server & Active Directory',
