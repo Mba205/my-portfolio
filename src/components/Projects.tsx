@@ -27,7 +27,7 @@ export function Projects() {
       title: 'Cloud Security Operations & Governance Lab',
       description: 'Deployed and intentionally misconfigured AWS infrastructure, then identified and remediated security gaps across IAM, S3 and EC2. Implemented CloudTrail logging, GuardDuty monitoring and VPC access controls aligned with AWS security best practices.',
       image: 'https://images.unsplash.com/photo-1664526937033-fe2c11f1be25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXR3b3JrJTIwZGlhZ3JhbSUyMGNsb3VkfGVufDF8fHx8MTc2NDY5NDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging'],
+      tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging', 'Misconfiguration Remediation'],
       icon: Cloud,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to architecture diagram or case study
@@ -35,7 +35,7 @@ export function Projects() {
     },
     {
       title: 'Security Automation Toolkit',
-      description: 'Python-based security automation toolkit that enriches IP intelligence, performs controlled network checks and generates structured JSON reports to support security investigations and incident response workflows.',
+      description: 'Built a Python toolkit that automates SOC investigation tasks; enriching IP intelligence via threat APIs, performing controlled port checks and generating structured JSON reports to accelerate incident response workflows.',
       image: 'https://images.unsplash.com/photo-1613677135043-a2512fbf49fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxweXRob24lMjBjb2RlJTIwdGVybWluYWx8ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Python', 'Git', 'JSON', 'Security Automation', 'Threat Intelligence APIs', 'Network Security'],
       icon: Terminal,
@@ -45,9 +45,9 @@ export function Projects() {
     },
     {
       title: 'IAM Security & Privilege Escalation Lab',
-      description: 'Built automated security orchestration platform for incident response workflows. Integrates with ticketing systems, EDR tools, and threat intelligence feeds for automated threat remediation.',
+      description: 'Exploited three AWS privilege escalation paths; including PassRole misuse and wildcard policy abuse to achieve admin access from a low-privilege account. Traced the full attack chain via CloudTrail, then remediated using SCPs, permission boundaries and least privilege policies.',
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['Python', 'REST APIs', 'Ansible', 'Security Orchestration'],
+      tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation'],
       icon: Network,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to demo or documentation
@@ -55,7 +55,7 @@ export function Projects() {
     },
     {
       title: 'Secure Infrastructure as Code (Terraform)',
-      description: 'Provisioned secure AWS infrastructure using Terraform, including a custom VPC, subnet and restricted security group. Implemented infrastructure as Code principles with controlled access and full lifecycle management (deploy → verify → destroy).',
+      description: 'Provisioned a secure AWS environment using Terraform; including a custom VPC, subnet and security group with SSH restricted to a single IP. Managed the full infrastructure lifecycle: deploy, verify and destroy, applying secure-by-design IaC principles throughout.',
       image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RlJTIwdGVybWluYWwlMjBzY3JlZW58ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Terraform', 'Infrastructure as Code (IaC)', 'AWS (EC2, VPC, IAM)', 'Access Control', 'Cloud Security', 'Network Security'],
       icon: Code,
@@ -65,9 +65,9 @@ export function Projects() {
     },
     {
       title: 'Network Security Analysis',
-      description: 'Comprehensive enterprise security audit assessing Microsoft Exchange and VPN infrastructure, identifying risks and compliance gaps. Delivered detailed risk-based assessments aligned with NIST, ISO 27001, and SOC 2 frameworks.',
+      description: 'Captured and analyzed live network traffic using Wireshark and Zeek to detect C2 communication, port scanning and DNS tunneling. Mapped findings to MITRE ATT&CK techniques and documented detection rules for firewall and IDS hardening',
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['Wireshark', 'Zeek'],
+      tech: ['Wireshark', 'Zeek', 'PCAP Analysis', 'TCP/IP', 'DNS Analysis', 'MITRE ATT&CK', 'BPF Filters', 'Intrusion Detection'],
       icon: FileCheck,
       github: '', // GitHub repo URL
       demo: '', // google drive link
