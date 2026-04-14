@@ -53,7 +53,7 @@ export function Skills() {
     {
       title: 'Network Security',
       icon: Network,
-      color: 'from-violet-500 to-purple-600',
+      color: 'from-purple-500 to-pink-500',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
