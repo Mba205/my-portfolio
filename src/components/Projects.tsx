@@ -48,7 +48,7 @@ export function Projects() {
       description: 'Exploited three AWS privilege escalation paths; including PassRole misuse and wildcard policy abuse to achieve admin access from a low-privilege account. Traced the full attack chain via CloudTrail, then remediated using SCPs, permission boundaries and least privilege policies.',
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation', 'Permission Boundaries'],
-      icon: Network,
+      icon: Lock,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to demo or documentation
       color: 'from-purple-500 to-pink-500',
@@ -68,7 +68,7 @@ export function Projects() {
       description: 'Captured and analyzed live network traffic using Wireshark and Zeek to detect C2 communication, port scanning and DNS tunneling. Mapped findings to MITRE ATT&CK techniques and documented detection rules for firewall and IDS hardening',
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Wireshark', 'Zeek', 'PCAP Analysis', 'TCP/IP', 'DNS Analysis', 'MITRE ATT&CK', 'BPF Filters', 'Intrusion Detection'],
-      icon: FileCheck,
+      icon: Network,
       github: '', // GitHub repo URL
       demo: '', // google drive link
       color: 'from-indigo-500 to-blue-500',
