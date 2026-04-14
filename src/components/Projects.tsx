@@ -15,7 +15,7 @@ export function Projects() {
   const projects = [
     {
       title: 'SIEM Threat Detection System',
-      description: 'Designed and deployed a cloud-based SIEM lab using Elastic Security and Python to simulate real-world SOC operations. Built authentication log ingestion, KQL based brute-force detection rules and investigative dashboards for alert triage.',
+      description: 'Deployed a cloud-based SIEM using Elastic Security to simulate SOC operations. Ingested authentication logs, built KQL brute-force and privilege escalation detection rules, and created investigative daashboards for full alert triage workflows.',
       image: 'https://images.unsplash.com/photo-1653213096273-4a0ba43fc50a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzZWN1cml0eSUyMGF1ZGl0JTIwZG9jdW1lbnR8ZW58MXx8fHwxNzY0Njk0MjQyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Elastic Security', 'Elasticsearch', 'Kibana', 'Python', 'KQL','Detection Engineering'],
       icon: Shield,
@@ -25,7 +25,7 @@ export function Projects() {
     },
     {
       title: 'Cloud Security Operations & Governance Lab',
-      description: 'Built and secured AWS cloud infrastructure to simulate real-world environments. Identified and remediated security misconfigurations in IAM, storage and compute resources while implementing logging, montoring and access controls aligned with security best practices.',
+      description: 'Deployed and intentionally misconfigured AWS infrastructure, then identified and remediated security gaps across IAM, S3 and EC2. Implemented CloudTrail logging, GuardDuty monitoring and VPC access controls aligned with AWS security best practices.',
       image: 'https://images.unsplash.com/photo-1664526937033-fe2c11f1be25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXR3b3JrJTIwZGlhZ3JhbSUyMGNsb3VkfGVufDF8fHx8MTc2NDY5NDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging'],
       icon: Cloud,
