@@ -116,11 +116,10 @@ export function Skills() {
     { name: 'Splunk', icon: Database },
     { name: 'Nmap', icon: Server },
     { name: 'Git', icon: GitBranch },
-    { name: 'Kibana', icon: Database },
   ];
 
   const competencies = [
-    { icon: Cloud, label: 'Cloud Security Architecture', color: 'text-cyan-400' },
+    { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
     { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-emerald-400' },
     { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-violet-400' },
     { icon: Shield, label: 'Incident Response', color: 'text-orange-400' },
