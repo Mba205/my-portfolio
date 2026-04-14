@@ -47,7 +47,7 @@ export function Projects() {
       title: 'IAM Security & Privilege Escalation Lab',
       description: 'Exploited three AWS privilege escalation paths; including PassRole misuse and wildcard policy abuse to achieve admin access from a low-privilege account. Traced the full attack chain via CloudTrail, then remediated using SCPs, permission boundaries and least privilege policies.',
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation'],
+      tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation', 'Permission Boundaries'],
       icon: Network,
       github: '', // Add your GitHub repo URL here (optional)
       demo: '', // Add link to demo or documentation
