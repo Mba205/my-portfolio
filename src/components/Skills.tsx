@@ -79,7 +79,7 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-cyan-500 to-blue-500',
+      color: 'from-indigo-500 to-purple-500',
       skills: [
         'NIST Cybersecurity Framework',
         'ISO 27001:2022 (Lead Auditor Certified)',
