@@ -58,7 +58,7 @@ export function Skills() {
       ],
     },
     {
-      title: 'AI Security Engineering',
+      title: 'AI Security Engineering (In Progress)',
       icon: Cpu,
       color: 'from-violet-400 to-purple-600',
       skills: [
@@ -69,7 +69,6 @@ export function Skills() {
         'LLM Security Research',
         'AI Supply Chain Risk Management',
         'MITRE ATLAS Framework',
-        'Secure AI Product Design Reviews',
       ],
     },
     {
@@ -95,7 +94,6 @@ export function Skills() {
         'Security Pipeline Automation',
         'Bash & PowerShell Scripting',
         'AWS CLI for Security Operations',
-        'JavaScript (AppSec & Tool Development)',
       ],
     },
     {
