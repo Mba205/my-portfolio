@@ -9,11 +9,14 @@ import {
   FileCheck,
   Lock,
   Database,
-  CheckCircle,
   Code,
   Server,
   GitBranch,
   Cpu,
+  Eye,
+  Layers,
+  Zap,
+  Search,
   Key,
 } from 'lucide-react';
 
@@ -25,104 +28,105 @@ export function Skills() {
 
   const skillCategories = [
     {
-      title: 'Cloud Security',
+      title: 'Cloud Security Engineering',
       icon: Cloud,
-      color: 'from-cyan-500 to-blue-600',
+      color: 'from-cyan-400 to-blue-500',
       skills: [
         'AWS Security Services (GuardDuty, CloudTrail, Config)',
         'IAM — Policies, Roles & Permission Boundaries',
         'Privilege Escalation Detection & Remediation',
-        'Cloud Misconfiguration Analysis',
         'Infrastructure as Code Security (Terraform)',
-        'VPC Design & Access Control',
+        'Cloud Misconfiguration Analysis & Hardening',
+        'Zero Trust Architecture & VPC Design',
+        'Container & Kubernetes Security',
+        'CSPM — Cloud Security Posture Management',
       ],
     },
     {
       title: 'Security Engineering',
       icon: Shield,
-      color: 'from-emerald-500 to-teal-600',
+      color: 'from-emerald-400 to-teal-600',
       skills: [
         'SIEM Design & Detection Engineering',
         'Threat Detection Rule Development (KQL)',
         'Alert Triage & Incident Response Workflows',
-        'Security Automation (Python)',
-        'Vulnerability Assessment',
+        'Vulnerability Assessment & Remediation',
         'MITRE ATT&CK Framework',
+        'Penetration Testing Fundamentals',
+        'Security Architecture & Design Reviews',
+        'Threat Modeling',
+      ],
+    },
+    {
+      title: 'AI Security Engineering',
+      icon: Cpu,
+      color: 'from-violet-400 to-purple-600',
+      skills: [
+        'AI/ML System Security Assessment',
+        'Prompt Injection Detection & Mitigation',
+        'Adversarial Attack Analysis',
+        'Model Poisoning & Data Integrity Attacks',
+        'LLM Security Research',
+        'AI Supply Chain Risk Management',
+        'MITRE ATLAS Framework',
+        'Secure AI Product Design Reviews',
       ],
     },
     {
       title: 'Network Security',
       icon: Network,
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-orange-400 to-red-500',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
         'TCP/IP & DNS Protocol Analysis',
         'C2 Communication Pattern Detection',
         'Firewall & IDS Rule Development',
-        'Network Segmentation',
+        'Network Segmentation & Architecture',
       ],
     },
     {
-      title: 'Security Automation & Scripting',
+      title: 'Security Automation & Development',
       icon: Code,
-      color: 'from-orange-500 to-red-500',
+      color: 'from-yellow-400 to-amber-500',
       skills: [
         'Python — Security Tooling & Automation',
-        'IP Intelligence Enrichment via Threat APIs',
-        'Structured JSON Reporting Pipelines',
-        'Bash Scripting & CLI Tooling',
+        'Threat Intelligence API Integration',
+        'Security Pipeline Automation',
+        'Bash & PowerShell Scripting',
         'AWS CLI for Security Operations',
-        'Git Version Control',
+        'JavaScript (AppSec & Tool Development)',
       ],
     },
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-indigo-500 to-purple-500',
+      color: 'from-rose-400 to-pink-600',
       skills: [
-        'NIST Cybersecurity Framework',
         'ISO 27001:2022 (Lead Auditor Certified)',
-        'SOC 2 Compliance',
+        'NIST Cybersecurity Framework',
+        'SOC 2 & SOX 404 Compliance',
         'HIPAA & GDPR',
-        'ITGC Testing & SOX 404',
         'Third-Party Risk Management',
-      ],
-    },
-    {
-      title: 'Systems & Infrastructure',
-      icon: Server,
-      color: 'from-green-500 to-emerald-500',
-      skills: [
-        'Linux System Administration',
-        'Windows Server & Active Directory',
-        'System Hardening',
-        'Bash & PowerShell Scripting',
-        'Log Analysis & SIEM Integration',
-        'Endpoint Security Fundamentals',
+        'Security Audit Planning & Execution',
       ],
     },
   ];
 
   const tools = [
-    { name: 'Elastic Security', icon: Shield },
-    { name: 'Wireshark', icon: Network },
-    { name: 'Zeek', icon: Network },
-    { name: 'Terraform', icon: Code },
-    { name: 'AWS CLI', icon: Cloud },
-    { name: 'Python', icon: Code },
-    { name: 'CloudTrail', icon: Database },
-    { name: 'GuardDuty', icon: AlertTriangle },
-    { name: 'Splunk', icon: Database },
-    { name: 'Nmap', icon: Server },
-    { name: 'Git', icon: GitBranch },
-  ];
-
-  const competencies = [
-    { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
-    { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-emerald-400' },
-    { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-violet-400' },
-    { icon: Shield, label: 'Incident Response', color: 'text-orange-400' },
+    { name: 'Elastic Security', icon: Shield, color: 'text-cyan-400' },
+    { name: 'Wireshark', icon: Network, color: 'text-emerald-400' },
+    { name: 'Zeek', icon: Eye, color: 'text-violet-400' },
+    { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
+    { name: 'AWS CLI', icon: Cloud, color: 'text-yellow-400' },
+    { name: 'Python', icon: Code, color: 'text-rose-400' },
+    { name: 'CloudTrail', icon: Database, color: 'text-cyan-400' },
+    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
+    { name: 'Nmap', icon: Server, color: 'text-orange-400' },
+    { name: 'Splunk', icon: Zap, color: 'text-yellow-400' },
+    { name: 'Git', icon: GitBranch, color: 'text-rose-400' },
+    { name: 'Palo Alto', icon: Shield, color: 'text-cyan-400' },
+    { name: 'CrowdStrike', icon: Lock, color: 'text-emerald-400' },
   ];
 
   return (
@@ -140,7 +144,7 @@ export function Skills() {
               Technical Skills
             </h2>
             <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
-              Hands-on expertise across cloud security, security engineering, and automation — built through real projects and professional experience.
+              Comprehensive expertise across cybersecurity domains, from security engineering foundations to cloud and AI security.
             </p>
             <div className="mt-4 h-1 w-24 bg-gradient-to-r from-cyan-500 to-emerald-500 mx-auto rounded-full" />
           </div>
@@ -159,7 +163,7 @@ export function Skills() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`relative p-2.5 rounded-lg bg-gradient-to-br ${category.color}`}>
                     <category.icon className="w-5 h-5 text-white" />
-                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} blur-lg opacity-50`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} blur-lg opacity-50 rounded-lg`} />
                   </div>
                   <h3 className="text-lg text-slate-100 group-hover:text-cyan-400 transition-colors">
                     {category.title}
@@ -204,34 +208,13 @@ export function Skills() {
                   transition={{ duration: 0.3, delay: 0.7 + index * 0.05 }}
                   className="group flex items-center gap-2 px-5 py-3 rounded-lg bg-slate-700/50 border border-slate-600/50 hover:border-cyan-500/50 hover:bg-slate-700 transition-all hover:scale-105"
                 >
-                  <tool.icon className="w-5 h-5 text-cyan-400" />
+                  <tool.icon className={`w-5 h-5 ${tool.color}`} />
                   <span className="text-slate-300 group-hover:text-cyan-400 transition-colors">
                     {tool.name}
                   </span>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
-
-          {/* Core Competencies */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {competencies.map((item, index) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
-                className="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-cyan-500/30 transition-all text-center"
-              >
-                <item.icon className={`w-8 h-8 ${item.color}`} />
-                <span className="text-sm text-slate-300">{item.label}</span>
-              </motion.div>
-            ))}
           </motion.div>
 
           <div className="text-center mt-16">
