@@ -45,8 +45,8 @@ export function Skills() {
     {
       title: 'Security Engineering & Operations',
       icon: Shield,
-      iconBg: 'bg-green-500',
-      iconGlow: 'shadow-green-500/60',
+      iconBg: 'bg-lime-400',
+      iconGlow: 'shadow-lime-400/80',
       skills: [
         'SIEM Design & Detection Engineering (KQL)',
         'Threat Detection, Alert Triage & Incident Response',
@@ -61,8 +61,8 @@ export function Skills() {
     {
       title: 'AI Security Engineering',
       icon: Cpu,
-      iconBg: 'bg-violet-500',
-      iconGlow: 'shadow-violet-500/60',
+      iconBg: 'bg-fuchsia-500',
+      iconGlow: 'shadow-fuchsia-500/80',
       skills: [
         'AI/ML System Security Assessment',
         'Prompt Injection Detection & Mitigation',
@@ -78,7 +78,7 @@ export function Skills() {
       title: 'Network Security',
       icon: Network,
       iconBg: 'bg-orange-500',
-      iconGlow: 'shadow-orange-500/60',
+      iconGlow: 'shadow-orange-500/80',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
@@ -91,8 +91,8 @@ export function Skills() {
     {
       title: 'Systems & Infrastructure',
       icon: Server,
-      iconBg: 'bg-rose-500',
-      iconGlow: 'shadow-rose-500/60',
+      iconBg: 'bg-pink-400',
+      iconGlow: 'shadow-pink-400/80',
       skills: [
         'Linux System Administration & Hardening',
         'Windows Server & Active Directory Security',
@@ -105,8 +105,8 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      iconBg: 'bg-amber-400',
-      iconGlow: 'shadow-amber-400/60',
+      iconBg: 'bg-yellow-300',
+      iconGlow: 'shadow-yellow-300/80',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -127,7 +127,6 @@ export function Skills() {
     { name: 'Python', icon: Code, color: 'text-cyan-400' },
     { name: 'CloudTrail', icon: Database, color: 'text-green-400' },
     { name: 'GuardDuty', icon: AlertTriangle, color: 'text-violet-400' },
-    { name: 'Kibana', icon: Search, color: 'text-orange-400' },
     { name: 'Nmap', icon: Server, color: 'text-amber-400' },
     { name: 'Splunk', icon: Zap, color: 'text-rose-400' },
     { name: 'Git', icon: GitBranch, color: 'text-cyan-400' },
