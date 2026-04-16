@@ -5,7 +5,6 @@ import {
   Network, 
   AlertTriangle, 
   Cloud, 
-  Terminal, 
   FileCheck,
   Lock,
   Database,
@@ -17,7 +16,7 @@ import {
   Layers,
   Zap,
   Search,
-  Key,
+  Terminal,
 } from 'lucide-react';
 
 export function Skills() {
@@ -30,7 +29,8 @@ export function Skills() {
     {
       title: 'Cloud Security Engineering',
       icon: Cloud,
-      color: 'from-cyan-400 to-blue-500',
+      iconBg: 'bg-cyan-500',
+      iconGlow: 'shadow-cyan-500/60',
       skills: [
         'AWS Security Services (GuardDuty, CloudTrail, Config)',
         'IAM — Policies, Roles & Permission Boundaries',
@@ -43,24 +43,26 @@ export function Skills() {
       ],
     },
     {
-      title: 'Security Engineering',
+      title: 'Security Engineering & Operations',
       icon: Shield,
-      color: 'from-emerald-400 to-teal-600',
+      iconBg: 'bg-green-500',
+      iconGlow: 'shadow-green-500/60',
       skills: [
-        'SIEM Design & Detection Engineering',
-        'Threat Detection Rule Development (KQL)',
-        'Alert Triage & Incident Response Workflows',
+        'SIEM Design & Detection Engineering (KQL)',
+        'Threat Detection, Alert Triage & Incident Response',
         'Vulnerability Assessment & Remediation',
         'MITRE ATT&CK Framework',
         'Penetration Testing Fundamentals',
-        'Security Architecture & Design Reviews',
-        'Threat Modeling',
+        'Security Architecture & Threat Modeling',
+        'Python & Bash Security Automation',
+        'Threat Intelligence API Integration',
       ],
     },
     {
-      title: 'AI Security Engineering (In Progress)',
+      title: 'AI Security Engineering',
       icon: Cpu,
-      color: 'from-violet-400 to-purple-600',
+      iconBg: 'bg-violet-500',
+      iconGlow: 'shadow-violet-500/60',
       skills: [
         'AI/ML System Security Assessment',
         'Prompt Injection Detection & Mitigation',
@@ -69,12 +71,14 @@ export function Skills() {
         'LLM Security Research',
         'AI Supply Chain Risk Management',
         'MITRE ATLAS Framework',
+        'Secure AI Product Design Reviews',
       ],
     },
     {
       title: 'Network Security',
       icon: Network,
-      color: 'from-orange-400 to-red-500',
+      iconBg: 'bg-orange-500',
+      iconGlow: 'shadow-orange-500/60',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
@@ -85,21 +89,24 @@ export function Skills() {
       ],
     },
     {
-      title: 'Security Automation & Development',
-      icon: Code,
-      color: 'from-yellow-400 to-amber-500',
+      title: 'Systems & Infrastructure',
+      icon: Server,
+      iconBg: 'bg-rose-500',
+      iconGlow: 'shadow-rose-500/60',
       skills: [
-        'Python — Security Tooling & Automation',
-        'Threat Intelligence API Integration',
-        'Security Pipeline Automation',
+        'Linux System Administration & Hardening',
+        'Windows Server & Active Directory Security',
+        'Endpoint Security & EDR Concepts',
+        'System Logging & Audit Configuration',
         'Bash & PowerShell Scripting',
-        'AWS CLI for Security Operations',
+        'Access Control & Privilege Management',
       ],
     },
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-rose-400 to-pink-600',
+      iconBg: 'bg-amber-400',
+      iconGlow: 'shadow-amber-400/60',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -113,18 +120,19 @@ export function Skills() {
 
   const tools = [
     { name: 'Elastic Security', icon: Shield, color: 'text-cyan-400' },
-    { name: 'Wireshark', icon: Network, color: 'text-emerald-400' },
+    { name: 'Wireshark', icon: Network, color: 'text-green-400' },
     { name: 'Zeek', icon: Eye, color: 'text-violet-400' },
     { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
-    { name: 'AWS CLI', icon: Cloud, color: 'text-yellow-400' },
-    { name: 'Python', icon: Code, color: 'text-rose-400' },
-    { name: 'CloudTrail', icon: Database, color: 'text-cyan-400' },
-    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
-    { name: 'Nmap', icon: Server, color: 'text-orange-400' },
-    { name: 'Splunk', icon: Zap, color: 'text-yellow-400' },
-    { name: 'Git', icon: GitBranch, color: 'text-rose-400' },
-    { name: 'Palo Alto', icon: Shield, color: 'text-cyan-400' },
-    { name: 'CrowdStrike', icon: Lock, color: 'text-emerald-400' },
+    { name: 'AWS CLI', icon: Cloud, color: 'text-amber-400' },
+    { name: 'Python', icon: Code, color: 'text-cyan-400' },
+    { name: 'CloudTrail', icon: Database, color: 'text-green-400' },
+    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-violet-400' },
+    { name: 'Kibana', icon: Search, color: 'text-orange-400' },
+    { name: 'Nmap', icon: Server, color: 'text-amber-400' },
+    { name: 'Splunk', icon: Zap, color: 'text-rose-400' },
+    { name: 'Git', icon: GitBranch, color: 'text-cyan-400' },
+    { name: 'Palo Alto', icon: Shield, color: 'text-green-400' },
+    { name: 'CrowdStrike', icon: Lock, color: 'text-violet-400' },
   ];
 
   return (
@@ -159,9 +167,8 @@ export function Skills() {
               >
                 {/* Category Header */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`relative p-2.5 rounded-lg bg-gradient-to-br ${category.color}`}>
+                  <div className={`relative p-2.5 rounded-lg ${category.iconBg} shadow-lg ${category.iconGlow} flex-shrink-0`}>
                     <category.icon className="w-5 h-5 text-white" />
-                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} blur-lg opacity-50 rounded-lg`} />
                   </div>
                   <h3 className="text-lg text-slate-100 group-hover:text-cyan-400 transition-colors">
                     {category.title}
