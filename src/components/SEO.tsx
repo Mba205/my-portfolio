@@ -10,7 +10,7 @@ interface SEOProps {
 }
 
 export function SEO({
-  title = 'Mba Nonna Portfolio',
+  title = 'Mba Nonna',
   description = 'Cybersecurity professional specializing in security analysis, cloud security, and GRC/audit. Experienced in threat detection, SIEM platforms, vulnerability assessments, AWS/Azure security, and compliance frameworks (NIST, ISO 27001, SOC 2).',
   keywords = 'cybersecurity, security analyst, cloud security, GRC, IT audit, penetration testing, SIEM, threat detection, vulnerability assessment, AWS security, Azure security, ISO 27001, compliance, Mba Nonna',
   author = 'Mba Nonna',
