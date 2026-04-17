@@ -100,7 +100,7 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-yellow-300 to-orange-400',
+      color: 'from-yellow-300 to-yellow-500',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -226,8 +226,8 @@ export function Skills() {
           >
             {[
               { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
-              { icon: Cpu, label: 'AI Security Engineering', color: 'text-fuchsia-400' },
-              { icon: Shield, label: 'Threat Detection & Response', color: 'text-lime-400' },
+              { icon: Cpu, label: 'AI Security Engineering', color: 'text-pink-400' },
+              { icon: Shield, label: 'Threat Detection & Response', color: 'text-green-400' },
               { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-orange-400' },
             ].map((item, index) => (
               <motion.div
