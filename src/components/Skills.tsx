@@ -17,6 +17,7 @@ import {
   Zap,
   Search,
   Terminal,
+  Key,
 } from 'lucide-react';
 
 export function Skills() {
@@ -29,8 +30,8 @@ export function Skills() {
     {
       title: 'Cloud Security Engineering',
       icon: Cloud,
-      iconBg: 'bg-cyan-500',
-      iconGlow: 'shadow-cyan-500/60',
+      color: 'from-cyan-400 to-cyan-600',
+      glow: 'shadow-cyan-400/80',
       skills: [
         'AWS Security Services (GuardDuty, CloudTrail, Config)',
         'IAM — Policies, Roles & Permission Boundaries',
@@ -45,8 +46,8 @@ export function Skills() {
     {
       title: 'Security Engineering & Operations',
       icon: Shield,
-      iconBg: 'bg-lime-400',
-      iconGlow: 'shadow-lime-400/80',
+      color: 'from-lime-300 to-green-500',
+      glow: 'shadow-lime-300/80',
       skills: [
         'SIEM Design & Detection Engineering (KQL)',
         'Threat Detection, Alert Triage & Incident Response',
@@ -61,8 +62,8 @@ export function Skills() {
     {
       title: 'AI Security Engineering',
       icon: Cpu,
-      iconBg: 'bg-fuchsia-500',
-      iconGlow: 'shadow-fuchsia-500/80',
+      color: 'from-fuchsia-400 to-purple-600',
+      glow: 'shadow-fuchsia-400/80',
       skills: [
         'AI/ML System Security Assessment',
         'Prompt Injection Detection & Mitigation',
@@ -77,8 +78,8 @@ export function Skills() {
     {
       title: 'Network Security',
       icon: Network,
-      iconBg: 'bg-orange-500',
-      iconGlow: 'shadow-orange-500/80',
+      color: 'from-orange-300 to-orange-500',
+      glow: 'shadow-orange-300/80',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
@@ -91,8 +92,8 @@ export function Skills() {
     {
       title: 'Systems & Infrastructure',
       icon: Server,
-      iconBg: 'bg-pink-400',
-      iconGlow: 'shadow-pink-400/80',
+      color: 'from-pink-300 to-rose-500',
+      glow: 'shadow-pink-300/80',
       skills: [
         'Linux System Administration & Hardening',
         'Windows Server & Active Directory Security',
@@ -105,8 +106,8 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      iconBg: 'bg-yellow-300',
-      iconGlow: 'shadow-yellow-300/80',
+      color: 'from-yellow-200 to-amber-400',
+      glow: 'shadow-yellow-200/80',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -120,18 +121,25 @@ export function Skills() {
 
   const tools = [
     { name: 'Elastic Security', icon: Shield, color: 'text-cyan-400' },
-    { name: 'Wireshark', icon: Network, color: 'text-green-400' },
-    { name: 'Zeek', icon: Eye, color: 'text-violet-400' },
+    { name: 'Wireshark', icon: Network, color: 'text-lime-400' },
+    { name: 'Zeek', icon: Eye, color: 'text-fuchsia-400' },
     { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
-    { name: 'AWS CLI', icon: Cloud, color: 'text-amber-400' },
+    { name: 'AWS CLI', icon: Cloud, color: 'text-yellow-300' },
     { name: 'Python', icon: Code, color: 'text-cyan-400' },
-    { name: 'CloudTrail', icon: Database, color: 'text-green-400' },
-    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-violet-400' },
-    { name: 'Nmap', icon: Server, color: 'text-amber-400' },
-    { name: 'Splunk', icon: Zap, color: 'text-rose-400' },
-    { name: 'Git', icon: GitBranch, color: 'text-cyan-400' },
-    { name: 'Palo Alto', icon: Shield, color: 'text-green-400' },
-    { name: 'CrowdStrike', icon: Lock, color: 'text-violet-400' },
+    { name: 'CloudTrail', icon: Database, color: 'text-lime-400' },
+    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-fuchsia-400' },
+    { name: 'Nmap', icon: Server, color: 'text-yellow-300' },
+    { name: 'Splunk', icon: Zap, color: 'text-cyan-400' },
+    { name: 'Git', icon: GitBranch, color: 'text-lime-400' },
+    { name: 'Palo Alto', icon: Shield, color: 'text-fuchsia-400' },
+    { name: 'CrowdStrike', icon: Lock, color: 'text-orange-400' },
+  ];
+
+  const competencies = [
+    { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
+    { icon: Cpu, label: 'AI Security Engineering', color: 'text-fuchsia-400' },
+    { icon: Shield, label: 'Threat Detection & Response', color: 'text-lime-400' },
+    { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-orange-400' },
   ];
 
   return (
@@ -166,8 +174,9 @@ export function Skills() {
               >
                 {/* Category Header */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`relative p-2.5 rounded-lg ${category.iconBg} shadow-lg ${category.iconGlow} flex-shrink-0`}>
+                  <div className={`relative p-2.5 rounded-lg bg-gradient-to-br ${category.color} shadow-lg ${category.glow} flex-shrink-0`}>
                     <category.icon className="w-5 h-5 text-white" />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} blur-lg opacity-50 rounded-lg`} />
                   </div>
                   <h3 className="text-lg text-slate-100 group-hover:text-cyan-400 transition-colors">
                     {category.title}
@@ -219,6 +228,27 @@ export function Skills() {
                 </motion.div>
               ))}
             </div>
+          </motion.div>
+
+          {/* Core Competencies */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {competencies.map((item, index) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
+                className="flex flex-col items-center gap-3 p-6 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-cyan-500/30 transition-all text-center"
+              >
+                <item.icon className={`w-8 h-8 ${item.color}`} />
+                <span className="text-sm text-slate-300">{item.label}</span>
+              </motion.div>
+            ))}
           </motion.div>
 
           <div className="text-center mt-16">
