@@ -29,8 +29,7 @@ export function Skills() {
     {
       title: 'Cloud Security Engineering',
       icon: Cloud,
-      iconColor: 'text-cyan-400',
-      borderColor: 'hover:border-cyan-400/50',
+      color: 'from-cyan-500 to-blue-500',
       skills: [
         'AWS Security Services (GuardDuty, CloudTrail, Config)',
         'IAM — Policies, Roles & Permission Boundaries',
@@ -45,8 +44,7 @@ export function Skills() {
     {
       title: 'Security Engineering & Operations',
       icon: Shield,
-      iconColor: 'text-green-400',
-      borderColor: 'hover:border-green-400/50',
+      color: 'from-emerald-400 to-green-500',
       skills: [
         'SIEM Design & Detection Engineering (KQL)',
         'Threat Detection, Alert Triage & Incident Response',
@@ -61,8 +59,7 @@ export function Skills() {
     {
       title: 'AI Security Engineering',
       icon: Cpu,
-      iconColor: 'text-fuchsia-400',
-      borderColor: 'hover:border-fuchsia-400/50',
+      color: 'from-fuchsia-500 to-pink-500',
       skills: [
         'AI/ML System Security Assessment',
         'Prompt Injection Detection & Mitigation',
@@ -77,8 +74,7 @@ export function Skills() {
     {
       title: 'Network Security',
       icon: Network,
-      iconColor: 'text-orange-400',
-      borderColor: 'hover:border-orange-400/50',
+      color: 'from-orange-500 to-red-500',
       skills: [
         'Packet Capture & Traffic Analysis (Wireshark, Zeek)',
         'Intrusion Detection & Anomaly Detection',
@@ -91,8 +87,7 @@ export function Skills() {
     {
       title: 'Systems & Infrastructure',
       icon: Server,
-      iconColor: 'text-rose-400',
-      borderColor: 'hover:border-rose-400/50',
+      color: 'from-violet-500 to-purple-500',
       skills: [
         'Linux System Administration & Hardening',
         'Windows Server & Active Directory Security',
@@ -105,8 +100,7 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      iconColor: 'text-yellow-400',
-      borderColor: 'hover:border-yellow-400/50',
+      color: 'from-yellow-400 to-amber-500',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -120,26 +114,19 @@ export function Skills() {
 
   const tools = [
     { name: 'Elastic Security', icon: Shield, color: 'text-cyan-400' },
-    { name: 'Wireshark', icon: Network, color: 'text-green-400' },
+    { name: 'Wireshark', icon: Network, color: 'text-emerald-400' },
     { name: 'Zeek', icon: Eye, color: 'text-fuchsia-400' },
     { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
-    { name: 'AWS CLI', icon: Cloud, color: 'text-rose-400' },
+    { name: 'AWS CLI', icon: Cloud, color: 'text-violet-400' },
     { name: 'Python', icon: Code, color: 'text-yellow-400' },
     { name: 'CloudTrail', icon: Database, color: 'text-cyan-400' },
-    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-green-400' },
+    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
     { name: 'Kibana', icon: Search, color: 'text-fuchsia-400' },
     { name: 'Nmap', icon: Server, color: 'text-orange-400' },
-    { name: 'Splunk', icon: Zap, color: 'text-rose-400' },
+    { name: 'Splunk', icon: Zap, color: 'text-violet-400' },
     { name: 'Git', icon: GitBranch, color: 'text-yellow-400' },
     { name: 'Palo Alto', icon: Shield, color: 'text-cyan-400' },
-    { name: 'CrowdStrike', icon: Lock, color: 'text-green-400' },
-  ];
-
-  const competencies = [
-    { icon: Cloud, label: 'Cloud Security Architecture', color: 'text-cyan-400' },
-    { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-green-400' },
-    { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-fuchsia-400' },
-    { icon: Shield, label: 'Security Engineering', color: 'text-orange-400' },
+    { name: 'CrowdStrike', icon: Lock, color: 'text-emerald-400' },
   ];
 
   return (
@@ -170,11 +157,14 @@ export function Skills() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
-                className={`group p-5 rounded-xl bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 ${category.borderColor} transition-all`}
+                className="group p-5 rounded-xl bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 hover:border-cyan-500/50 transition-all"
               >
-                {/* Category Header */}
+                {/* Category Header — exact original pattern */}
                 <div className="flex items-center gap-3 mb-4">
-                  <category.icon className={`w-6 h-6 flex-shrink-0 ${category.iconColor}`} />
+                  <div className={`relative p-2.5 rounded-lg bg-gradient-to-br ${category.color}`}>
+                    <category.icon className="w-5 h-5 text-white" />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} blur-lg opacity-50`} />
+                  </div>
                   <h3 className="text-lg text-slate-100 group-hover:text-cyan-400 transition-colors">
                     {category.title}
                   </h3>
@@ -234,7 +224,12 @@ export function Skills() {
             transition={{ duration: 0.5, delay: 0.8 }}
             className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {competencies.map((item, index) => (
+            {[
+              { icon: Cloud, label: 'Cloud Security Architecture', color: 'text-cyan-400' },
+              { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-emerald-400' },
+              { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-fuchsia-400' },
+              { icon: Shield, label: 'Security Engineering', color: 'text-orange-400' },
+            ].map((item, index) => (
               <motion.div
                 key={item.label}
                 initial={{ opacity: 0, y: 20 }}
