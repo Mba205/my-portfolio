@@ -44,7 +44,7 @@ export function Skills() {
     {
       title: 'Security Engineering & Operations',
       icon: Shield,
-      color: 'from-emerald-400 to-green-500',
+      color: 'from-lime-400 to-emerald-500',
       skills: [
         'SIEM Design & Detection Engineering (KQL)',
         'Threat Detection, Alert Triage & Incident Response',
@@ -100,7 +100,7 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-yellow-400 to-amber-500',
+      color: 'from-yellow-300 to-orange-400',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -225,10 +225,10 @@ export function Skills() {
             className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {[
-              { icon: Cloud, label: 'Cloud Security Architecture', color: 'text-cyan-400' },
-              { icon: Key, label: 'IAM & Privilege Escalation', color: 'text-emerald-400' },
-              { icon: Database, label: 'SIEM & Detection Engineering', color: 'text-fuchsia-400' },
-              { icon: Shield, label: 'Security Engineering', color: 'text-orange-400' },
+              { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
+              { icon: Cpu, label: 'AI Security Engineering', color: 'text-fuchsia-400' },
+              { icon: Shield, label: 'Threat Detection & Response', color: 'text-lime-400' },
+              { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-orange-400' },
             ].map((item, index) => (
               <motion.div
                 key={item.label}
