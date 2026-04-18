@@ -71,7 +71,7 @@ export function Hero() {
             className="max-w-3xl mx-auto"
           >
             <p className="text-xl sm:text-2xl text-slate-300 font-mono">
-              Cybersecurity | Cloud Security | AI Security Engineer
+              Cybersecurity | Cloud Security | Security Engineering
             </p>
           </motion.div>
 
