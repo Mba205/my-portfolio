@@ -19,8 +19,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1653213096273-4a0ba43fc50a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzZWN1cml0eSUyMGF1ZGl0JTIwZG9jdW1lbnR8ZW58MXx8fHwxNzY0Njk0MjQyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Elastic Security', 'Elasticsearch', 'Kibana', 'Python', 'KQL','Detection Engineering'],
       icon: Shield,
-      github: 'https://github.com/Mba205/siem-threat-detection-system', //GitHub repo URL
-      demo: 'https://drive.google.com/drive/folders/1KlRFmTyGIBf7vuMndxgPS86sSGM2CkTX?usp=sharing', // Add link to writeup, demo, or case study
+      github: 'https://github.com/Mba205/siem-threat-detection-system',
+      demo: 'https://drive.google.com/drive/folders/1KlRFmTyGIBf7vuMndxgPS86sSGM2CkTX?usp=sharing',
       color: 'from-cyan-500 to-blue-500',
     },
     {
@@ -29,8 +29,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1664526937033-fe2c11f1be25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXR3b3JrJTIwZGlhZ3JhbSUyMGNsb3VkfGVufDF8fHx8MTc2NDY5NDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging', 'Misconfiguration Remediation'],
       icon: Cloud,
-      github: '', // Add your GitHub repo URL here (optional)
-      demo: '', // Add link to architecture diagram or case study
+      github: '',
+      demo: '',
       color: 'from-orange-500 to-red-500',
     },
     {
@@ -39,8 +39,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1613677135043-a2512fbf49fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxweXRob24lMjBjb2RlJTIwdGVybWluYWx8ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Python', 'Git', 'JSON', 'Security Automation', 'Threat Intelligence APIs', 'Network Security'],
       icon: Terminal,
-      github: 'https://github.com/Mba205/security-automation-toolkit', // GitHub repo URL
-      demo: 'https://drive.google.com/drive/folders/1m85JJ4y_ttHowUYmYyyjgti_tQjZkCCn?usp=sharing', // link documentation
+      github: 'https://github.com/Mba205/security-automation-toolkit',
+      demo: 'https://drive.google.com/drive/folders/1m85JJ4y_ttHowUYmYyyjgti_tQjZkCCn?usp=sharing',
       color: 'from-emerald-500 to-teal-500',
     },
     {
@@ -49,8 +49,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation', 'Permission Boundaries'],
       icon: Lock,
-      github: '', // Add your GitHub repo URL here (optional)
-      demo: '', // Add link to demo or documentation
+      github: '',
+      demo: '',
       color: 'from-purple-500 to-pink-500',
     },
     {
@@ -59,8 +59,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RlJTIwdGVybWluYWwlMjBzY3JlZW58ZW58MXx8fHwxNzY0Njk0MjQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Terraform', 'Infrastructure as Code (IaC)', 'AWS (EC2, VPC, IAM)', 'Access Control', 'Cloud Security', 'Network Security'],
       icon: Code,
-      github: 'https://github.com/Mba205/secure-iac-terraform', // GitHub repo URL 
-      demo: 'https://drive.google.com/drive/folders/1odw8omZ0_1dZRRYNuwyv9MlrvB8_JiGC?usp=sharing', // Add link
+      github: 'https://github.com/Mba205/secure-iac-terraform',
+      demo: 'https://drive.google.com/drive/folders/1odw8omZ0_1dZRRYNuwyv9MlrvB8_JiGC?usp=sharing',
       color: 'from-green-500 to-emerald-500',
     },
     {
@@ -69,8 +69,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Wireshark', 'Zeek', 'PCAP Analysis', 'TCP/IP', 'DNS Analysis', 'MITRE ATT&CK', 'BPF Filters', 'Intrusion Detection'],
       icon: Network,
-      github: '', // GitHub repo URL
-      demo: '', // google drive link
+      github: '',
+      demo: '',
       color: 'from-indigo-500 to-blue-500',
     },
   ];
@@ -106,25 +106,15 @@ export function Projects() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                style={{
-                  transformStyle: 'preserve-3d',
-                  perspective: '1000px',
-                }}
                 whileHover={{
                   scale: 1.05,
-                  rotateX: 5,
-                  rotateY: 5,
-                  z: 50,
+                  y: -8,
                   transition: { duration: 0.3 }
                 }}
                 className="group relative bg-slate-800/40 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700/50 hover:border-cyan-500/50 transition-all hover:shadow-xl hover:shadow-cyan-500/10"
               >
                 {/* Image */}
-                <motion.div 
-                  className="relative h-48 overflow-hidden"
-                  style={{ transformStyle: 'preserve-3d' }}
-                  animate={hoveredIndex === index ? { z: 20 } : { z: 0 }}
-                >
+                <div className="relative h-48 overflow-hidden">
                   <ImageWithFallback
                     src={project.image}
                     alt={project.title}
@@ -138,24 +128,18 @@ export function Projects() {
                     animate={hoveredIndex === index ? { 
                       scale: 1.2, 
                       rotate: 360,
-                      z: 30 
                     } : { 
                       scale: 1, 
                       rotate: 0,
-                      z: 0 
                     }}
                     transition={{ duration: 0.5 }}
                   >
                     <project.icon className="w-5 h-5 text-white" />
                   </motion.div>
-                </motion.div>
+                </div>
 
                 {/* Content */}
-                <motion.div 
-                  className="p-6 space-y-4"
-                  style={{ transformStyle: 'preserve-3d' }}
-                  animate={hoveredIndex === index ? { z: 10 } : { z: 0 }}
-                >
+                <div className="p-6 space-y-4">
                   <h3 className="text-xl text-slate-100 group-hover:text-cyan-400 transition-colors">
                     {project.title}
                   </h3>
@@ -201,7 +185,7 @@ export function Projects() {
                       </a>
                     )}
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Hover effect overlay */}
                 <div className="absolute inset-0 border-2 border-cyan-400/0 group-hover:border-cyan-400/20 rounded-xl transition-all pointer-events-none" />
