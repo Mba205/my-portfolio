@@ -11,6 +11,7 @@ export function Projects() {
   });
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const projects = [
     {
@@ -75,6 +76,8 @@ export function Projects() {
     },
   ];
 
+  const CHAR_LIMIT = 100;
+
   return (
     <section id="projects" className="relative py-20 sm:py-32 bg-slate-900/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,99 +101,118 @@ export function Projects() {
 
           {/* Projects Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                whileHover={{
-                  scale: 1.05,
-                  y: -8,
-                  transition: { duration: 0.3 }
-                }}
-                className="group relative bg-slate-800/40 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700/50 hover:border-cyan-500/50 transition-all hover:shadow-xl hover:shadow-cyan-500/10"
-              >
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <ImageWithFallback
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
-                  
-                  {/* Icon Badge */}
-                  <motion.div 
-                    className={`absolute top-4 right-4 p-3 rounded-lg bg-gradient-to-br ${project.color} shadow-lg`}
-                    animate={hoveredIndex === index ? { 
-                      scale: 1.2, 
-                      rotate: 360,
-                    } : { 
-                      scale: 1, 
-                      rotate: 0,
-                    }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <project.icon className="w-5 h-5 text-white" />
-                  </motion.div>
-                </div>
+            {projects.map((project, index) => {
+              const isExpanded = expandedIndex === index;
+              const isLong = project.description.length > CHAR_LIMIT;
 
-                {/* Content */}
-                <div className="p-6 space-y-4">
-                  <h3 className="text-xl text-slate-100 group-hover:text-cyan-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  
-                  <p className="text-sm text-slate-400 line-clamp-3">
-                    {project.description}
-                  </p>
-
-                  {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1 text-xs rounded-full bg-slate-900/50 text-cyan-400 border border-cyan-500/30"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+              return (
+                <motion.div
+                  key={project.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -8,
+                    transition: { duration: 0.3 }
+                  }}
+                  className="group relative bg-slate-800/40 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700/50 hover:border-cyan-500/50 transition-all hover:shadow-xl hover:shadow-cyan-500/10"
+                >
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <ImageWithFallback
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
+                    
+                    {/* Icon Badge */}
+                    <motion.div 
+                      className={`absolute top-4 right-4 p-3 rounded-lg bg-gradient-to-br ${project.color} shadow-lg`}
+                      animate={hoveredIndex === index ? { 
+                        scale: 1.2, 
+                        rotate: 360,
+                      } : { 
+                        scale: 1, 
+                        rotate: 0,
+                      }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <project.icon className="w-5 h-5 text-white" />
+                    </motion.div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-3 pt-4">
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-cyan-500/50 transition-all group/btn"
-                      >
-                        <Github className="w-4 h-4 text-slate-300 group-hover/btn:text-cyan-400 transition-colors" />
-                        <span className="text-sm text-slate-300 group-hover/btn:text-cyan-400 transition-colors">Code</span>
-                      </a>
-                    )}
-                    {project.demo && (
-                      <a
-                        href={project.demo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`${project.github ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 hover:from-cyan-500/20 hover:to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-500/50 transition-all group/btn`}
-                      >
-                        <ExternalLink className="w-4 h-4 text-cyan-400 transition-colors" />
-                        <span className="text-sm text-cyan-400 transition-colors">Learn More</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
+                  {/* Content */}
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-xl text-slate-100 group-hover:text-cyan-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    
+                    {/* Description with read more */}
+                    <p className="text-sm text-slate-400">
+                      {isExpanded || !isLong
+                        ? project.description
+                        : project.description.slice(0, CHAR_LIMIT).trimEnd() + '...'}
+                      {isLong && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedIndex(isExpanded ? null : index);
+                          }}
+                          className="ml-1 text-cyan-400 hover:text-cyan-300 transition-colors font-medium focus:outline-none"
+                        >
+                          {isExpanded ? ' less' : ' more'}
+                        </button>
+                      )}
+                    </p>
 
-                {/* Hover effect overlay */}
-                <div className="absolute inset-0 border-2 border-cyan-400/0 group-hover:border-cyan-400/20 rounded-xl transition-all pointer-events-none" />
-              </motion.div>
-            ))}
+                    {/* Tech Stack */}
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1 text-xs rounded-full bg-slate-900/50 text-cyan-400 border border-cyan-500/30"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-3 pt-4">
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-cyan-500/50 transition-all group/btn"
+                        >
+                          <Github className="w-4 h-4 text-slate-300 group-hover/btn:text-cyan-400 transition-colors" />
+                          <span className="text-sm text-slate-300 group-hover/btn:text-cyan-400 transition-colors">Code</span>
+                        </a>
+                      )}
+                      {project.demo && (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${project.github ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 hover:from-cyan-500/20 hover:to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-500/50 transition-all group/btn`}
+                        >
+                          <ExternalLink className="w-4 h-4 text-cyan-400 transition-colors" />
+                          <span className="text-sm text-cyan-400 transition-colors">Learn More</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-cyan-400/0 group-hover:border-cyan-400/20 rounded-xl transition-all pointer-events-none" />
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* View More Projects CTA */}
