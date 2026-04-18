@@ -259,7 +259,7 @@ export function Experience() {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
-                    Presidential Scholar - 4 Consective Semesters
+                    Presidential Scholar - 4 Consecutive Semesters
                   </li>
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
