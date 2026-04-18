@@ -44,7 +44,7 @@ export function Skills() {
     {
       title: 'Security Engineering & Operations',
       icon: Shield,
-      color: 'from-lime-400 to-emerald-500',
+      color: 'from-emerald-400 to-emerald-600',
       skills: [
         'SIEM Design & Detection Engineering (KQL)',
         'Threat Detection, Alert Triage & Incident Response',
@@ -59,7 +59,7 @@ export function Skills() {
     {
       title: 'AI Security Engineering',
       icon: Cpu,
-      color: 'from-fuchsia-500 to-pink-500',
+      color: 'from-pink-500 to-rose-500',
       skills: [
         'AI/ML System Security Assessment',
         'Prompt Injection Detection & Mitigation',
@@ -100,7 +100,7 @@ export function Skills() {
     {
       title: 'Governance, Risk & Compliance',
       icon: FileCheck,
-      color: 'from-yellow-300 to-yellow-500',
+      color: 'from-pink-400 to-pink-600',
       skills: [
         'ISO 27001:2022 (Lead Auditor Certified)',
         'NIST Cybersecurity Framework',
@@ -115,13 +115,12 @@ export function Skills() {
   const tools = [
     { name: 'Elastic Security', icon: Shield, color: 'text-cyan-400' },
     { name: 'Wireshark', icon: Network, color: 'text-emerald-400' },
-    { name: 'Zeek', icon: Eye, color: 'text-fuchsia-400' },
+    { name: 'Zeek', icon: Eye, color: 'text-pink-400' },
     { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
     { name: 'AWS CLI', icon: Cloud, color: 'text-violet-400' },
     { name: 'Python', icon: Code, color: 'text-yellow-400' },
     { name: 'CloudTrail', icon: Database, color: 'text-cyan-400' },
     { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
-    { name: 'Kibana', icon: Search, color: 'text-fuchsia-400' },
     { name: 'Nmap', icon: Server, color: 'text-orange-400' },
     { name: 'Splunk', icon: Zap, color: 'text-violet-400' },
     { name: 'Git', icon: GitBranch, color: 'text-yellow-400' },
@@ -226,8 +225,8 @@ export function Skills() {
           >
             {[
               { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
-              { icon: Cpu, label: 'AI Security Engineering', color: 'text-pink-400' },
-              { icon: Shield, label: 'Threat Detection & Response', color: 'text-green-400' },
+              { icon: Cpu, label: 'AI Security Engineering', color: 'text-violet-400' },
+              { icon: Shield, label: 'Threat Detection & Response', color: 'text-emerald-400' },
               { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-orange-400' },
             ].map((item, index) => (
               <motion.div
