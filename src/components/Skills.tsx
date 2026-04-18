@@ -55,7 +55,7 @@ export function Skills() {
       ],
     },
     {
-      title: 'AI Security Engineering',
+      title: 'AI Security Engineering (In Progress)',
       icon: Cpu,
       color: 'from-fuchsia-500 to-pink-500',
       skills: [
