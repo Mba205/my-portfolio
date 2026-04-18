@@ -259,15 +259,15 @@ export function Experience() {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
+                    Presidential Scholar - 4 Consective Semesters
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-300">
+                    <span className="text-cyan-400">★</span>
                     Duke of Edinburgh International Award - Silver Standard
                   </li>
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
-                    Gold Medalist, Energy Efficient Airport Operation Challenege
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-slate-300">
-                    <span className="text-cyan-400">★</span>
-                    N/A
+                     Gold Medalist, Energy Efficient Airport Operation Challenege
                   </li>
                   <li className="flex items-start gap-2 text-sm text-slate-300">
                     <span className="text-cyan-400">★</span>
