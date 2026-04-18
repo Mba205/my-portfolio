@@ -223,9 +223,9 @@ export function Skills() {
           >
             {[
               { icon: Cloud, label: 'Cloud Security Engineering', color: 'text-cyan-400' },
-              { icon: Cpu, label: 'AI Security Engineering', color: 'text-purple-400' },
+              { icon: Cpu, label: 'AI Security Engineering', color: 'text-orange-400' },
               { icon: Shield, label: 'Threat Detection & Response', color: 'text-emerald-400' },
-              { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-rose-500' },
+              { icon: Lock, label: 'Zero Trust & Access Control', color: 'text-purple-400' },
             ].map((item, index) => (
               <motion.div
                 key={item.label}
