@@ -202,7 +202,7 @@ export function Projects() {
                           className={`${project.github ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 hover:from-cyan-500/20 hover:to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-500/50 transition-all group/btn`}
                         >
                           <ExternalLink className="w-4 h-4 text-cyan-400 transition-colors" />
-                          <span className="text-sm text-cyan-400 transition-colors">Learn More</span>
+                          <span className="text-sm text-cyan-400 transition-colors">View</span>
                         </a>
                       )}
                     </div>
