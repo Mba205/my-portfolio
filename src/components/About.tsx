@@ -9,14 +9,14 @@ export function About() {
     threshold: 0.1,
   });
 
-  const skills = [
-    { name: 'Threat Detection & Security Analytics', icon: Shield },
-    { name: 'Offensive Security & Adversary Techniques', icon: Terminal },
-    { name: 'Network Security Monitoring & Defense', icon: Network },
-    { name: 'Cloud Security Engineering (AWS, Azure)', icon: Cloud },
-    { name: 'Security Engineering & System Architecture', icon: Database },
-    { name: 'Governance, Risk & Compliance (GRC)', icon: Lock },
-  ];
+ const skills = [
+  { name: 'Cloud Security Engineering (AWS, Azure)', icon: Cloud },
+  { name: 'Security Engineering & System Architecture', icon: Database },
+  { name: 'Threat Detection & Security Analytics', icon: Shield },
+  { name: 'Network Security Monitoring & Defense', icon: Network },
+  { name: 'Offensive Security & Adversary Techniques', icon: Terminal },
+  { name: 'Governance, Risk & Compliance (GRC)', icon: Lock },
+];
 
   return (
     <section id="about" className="relative py-20 sm:py-32">
