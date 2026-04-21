@@ -28,197 +28,106 @@ export function Hero() {
     const handleResize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      init();
     };
     window.addEventListener('resize', handleResize);
 
-    interface Node {
+    // Aurora orbs — slow drifting gradient blobs
+    interface Orb {
       x: number;
       y: number;
+      r: number;
       vx: number;
       vy: number;
+      hue: number;
+      hueSpeed: number;
+      opacity: number;
+    }
+
+    const orbs: Orb[] = [
+      { x: W * 0.2,  y: H * 0.3,  r: W * 0.38, vx: 0.18,  vy: 0.12,  hue: 185, hueSpeed: 0.04,  opacity: 0.28 },
+      { x: W * 0.75, y: H * 0.6,  r: W * 0.32, vx: -0.14, vy: -0.10, hue: 260, hueSpeed: 0.035, opacity: 0.22 },
+      { x: W * 0.5,  y: H * 0.85, r: W * 0.28, vx: 0.10,  vy: -0.15, hue: 160, hueSpeed: 0.05,  opacity: 0.20 },
+      { x: W * 0.85, y: H * 0.15, r: W * 0.25, vx: -0.12, vy: 0.18,  hue: 210, hueSpeed: 0.03,  opacity: 0.18 },
+      { x: W * 0.1,  y: H * 0.75, r: W * 0.22, vx: 0.16,  vy: -0.08, hue: 290, hueSpeed: 0.045, opacity: 0.16 },
+    ];
+
+    // Stars / deep space particles
+    interface Star {
+      x: number;
+      y: number;
       r: number;
-      type: 'hub' | 'node';
-      pulse: number;
-      pulseSpeed: number;
+      alpha: number;
+      twinkleSpeed: number;
+      twinklePhase: number;
     }
 
-    interface Pulse {
-      fromIdx: number;
-      toIdx: number;
-      t: number;
-      speed: number;
-      attack: boolean;
-    }
+    const stars: Star[] = Array.from({ length: 180 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.2,
+      alpha: 0.2 + Math.random() * 0.6,
+      twinkleSpeed: 0.005 + Math.random() * 0.015,
+      twinklePhase: Math.random() * Math.PI * 2,
+    }));
 
-    let nodes: Node[] = [];
-    let pulses: Pulse[] = [];
-    let pulseTimer = 0;
-
-    const init = () => {
-      const count = Math.floor((W * H) / 22000);
-      nodes = Array.from({ length: Math.max(28, Math.min(count, 55)) }, (_, i) => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        r: i < 6 ? 4.5 : 2.5,
-        type: i < 6 ? 'hub' : 'node',
-        pulse: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.015 + Math.random() * 0.02,
-      }));
-      pulses = [];
-    };
-
-    init();
-
-    const MAX_DIST = 180;
-
-    const spawnPulse = () => {
-      const fromIdx = Math.floor(Math.random() * nodes.length);
-      // find a connected neighbour
-      let best = -1;
-      let bestDist = Infinity;
-      nodes.forEach((n, i) => {
-        if (i === fromIdx) return;
-        const dx = n.x - nodes[fromIdx].x;
-        const dy = n.y - nodes[fromIdx].y;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        if (d < MAX_DIST && d < bestDist) { bestDist = d; best = i; }
-      });
-      if (best === -1) return;
-      pulses.push({
-        fromIdx,
-        toIdx: best,
-        t: 0,
-        speed: 0.006 + Math.random() * 0.006,
-        attack: Math.random() < 0.25,
-      });
-    };
+    let time = 0;
 
     const draw = () => {
-      // Fade trail
-      ctx.fillStyle = 'rgba(3, 10, 25, 0.18)';
+      time += 0.005;
+
+      // Deep space base
+      ctx.fillStyle = 'rgb(4, 6, 18)';
       ctx.fillRect(0, 0, W, H);
 
-      // Update nodes
-      nodes.forEach((n) => {
-        n.x += n.vx;
-        n.y += n.vy;
-        n.pulse += n.pulseSpeed;
-        if (n.x < 0 || n.x > W) n.vx *= -1;
-        if (n.y < 0 || n.y > H) n.vy *= -1;
-      });
+      // Draw aurora orbs
+      orbs.forEach((orb) => {
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+        orb.hue += orb.hueSpeed;
 
-      // Draw edges
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < MAX_DIST) {
-            const alpha = (1 - dist / MAX_DIST) * 0.18;
-            const isHubEdge = nodes[i].type === 'hub' || nodes[j].type === 'hub';
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = isHubEdge
-              ? `rgba(6,182,212,${alpha * 1.8})`
-              : `rgba(100,200,180,${alpha})`;
-            ctx.lineWidth = isHubEdge ? 0.7 : 0.4;
-            ctx.stroke();
-          }
-        }
-      }
+        // Soft bounce
+        if (orb.x < -orb.r * 0.5) orb.vx = Math.abs(orb.vx);
+        if (orb.x > W + orb.r * 0.5) orb.vx = -Math.abs(orb.vx);
+        if (orb.y < -orb.r * 0.5) orb.vy = Math.abs(orb.vy);
+        if (orb.y > H + orb.r * 0.5) orb.vy = -Math.abs(orb.vy);
 
-      // Draw pulses
-      for (let i = pulses.length - 1; i >= 0; i--) {
-        const p = pulses[i];
-        p.t += p.speed;
-        if (p.t >= 1) { pulses.splice(i, 1); continue; }
+        const pulse = 1 + 0.08 * Math.sin(time * 1.2 + orb.hue);
+        const r = orb.r * pulse;
 
-        const from = nodes[p.fromIdx];
-        const to = nodes[p.toIdx];
-        const px = from.x + (to.x - from.x) * p.t;
-        const py = from.y + (to.y - from.y) * p.t;
+        const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, r);
+        g.addColorStop(0,   `hsla(${orb.hue}, 85%, 65%, ${orb.opacity})`);
+        g.addColorStop(0.4, `hsla(${orb.hue + 30}, 80%, 55%, ${orb.opacity * 0.6})`);
+        g.addColorStop(1,   `hsla(${orb.hue + 60}, 70%, 40%, 0)`);
 
-        // Trail
-        const trailT = Math.max(0, p.t - 0.18);
-        const tx = from.x + (to.x - from.x) * trailT;
-        const ty = from.y + (to.y - from.y) * trailT;
-        const trail = ctx.createLinearGradient(tx, ty, px, py);
-        if (p.attack) {
-          trail.addColorStop(0, 'rgba(239,68,68,0)');
-          trail.addColorStop(1, 'rgba(239,68,68,0.9)');
-        } else {
-          trail.addColorStop(0, 'rgba(6,182,212,0)');
-          trail.addColorStop(1, 'rgba(6,182,212,0.9)');
-        }
         ctx.beginPath();
-        ctx.moveTo(tx, ty);
-        ctx.lineTo(px, py);
-        ctx.strokeStyle = trail;
-        ctx.lineWidth = p.attack ? 2 : 1.5;
-        ctx.stroke();
-
-        // Head dot
-        const headColor = p.attack ? '239,68,68' : '6,182,212';
-        const g = ctx.createRadialGradient(px, py, 0, px, py, 7);
-        g.addColorStop(0, `rgba(${headColor},1)`);
-        g.addColorStop(1, `rgba(${headColor},0)`);
-        ctx.beginPath();
-        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.arc(orb.x, orb.y, r, 0, Math.PI * 2);
         ctx.fillStyle = g;
         ctx.fill();
-      }
-
-      // Draw nodes
-      nodes.forEach((n) => {
-        const pulse = Math.sin(n.pulse) * 0.35 + 0.65;
-        const isHub = n.type === 'hub';
-        const color = isHub ? '6,182,212' : '100,200,180';
-
-        // Outer glow
-        const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 5);
-        glow.addColorStop(0, `rgba(${color},${isHub ? 0.18 * pulse : 0.08 * pulse})`);
-        glow.addColorStop(1, `rgba(${color},0)`);
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        // Core
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r * pulse, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color},${isHub ? 0.9 : 0.7})`;
-        ctx.fill();
-
-        // Hub ring
-        if (isHub) {
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, n.r * 2.8 * pulse, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(${color},0.2)`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
       });
 
-      // Spawn pulses
-      pulseTimer++;
-      if (pulseTimer % 25 === 0) spawnPulse();
+      // Noise overlay to blend orbs (multiple semi-transparent passes)
+      ctx.globalCompositeOperation = 'source-over';
 
-      // Subtle center gradient overlay to make text readable
-      const centerFade = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.38);
-      centerFade.addColorStop(0, 'rgba(3,10,25,0.55)');
-      centerFade.addColorStop(1, 'rgba(3,10,25,0)');
-      ctx.fillStyle = centerFade;
+      // Draw stars
+      stars.forEach((star) => {
+        star.twinklePhase += star.twinkleSpeed;
+        const alpha = star.alpha * (0.5 + 0.5 * Math.sin(star.twinklePhase));
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.fill();
+      });
+
+      // Subtle dark vignette to make text readable
+      const vignette = ctx.createRadialGradient(W / 2, H / 2, H * 0.1, W / 2, H / 2, H * 0.85);
+      vignette.addColorStop(0, 'rgba(4, 6, 18, 0)');
+      vignette.addColorStop(1, 'rgba(4, 6, 18, 0.65)');
+      ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, W, H);
 
       animationId = requestAnimationFrame(draw);
     };
 
-    // Warm up
-    for (let i = 0; i < 3; i++) spawnPulse();
     draw();
 
     return () => {
@@ -232,14 +141,11 @@ export function Hero() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'rgb(3, 10, 25)' }}
+        style={{ background: 'rgb(4, 6, 18)' }}
       />
 
-      {/* Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_30%,rgba(3,10,25,0.5)_100%)]" />
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
+      {/* Bottom fade into next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-950 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <motion.div
