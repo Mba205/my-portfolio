@@ -28,219 +28,197 @@ export function Hero() {
     const handleResize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      initColumns();
+      init();
     };
     window.addEventListener('resize', handleResize);
 
-    // ── Matrix rain ──────────────────────────────────────────
-    const FONT_SIZE = 14;
-    const CHARS = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF';
-    let columns: number[] = [];
-
-    const initColumns = () => {
-      const count = Math.floor(W / FONT_SIZE);
-      columns = Array.from({ length: count }, () => Math.random() * -H);
-    };
-    initColumns();
-
-    // ── Hex particles ─────────────────────────────────────────
-    interface Hex {
+    interface Node {
       x: number;
       y: number;
-      size: number;
       vx: number;
       vy: number;
-      alpha: number;
-      fadeSpeed: number;
-      rotSpeed: number;
-      rot: number;
-      color: string;
-    }
-
-    const HEX_COLORS = [
-      'rgba(6,182,212,',   // cyan
-      'rgba(16,185,129,',  // emerald
-      'rgba(139,92,246,',  // violet
-    ];
-
-    const hexes: Hex[] = Array.from({ length: 28 }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      size: 12 + Math.random() * 28,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      alpha: 0.03 + Math.random() * 0.08,
-      fadeSpeed: 0.001 + Math.random() * 0.002,
-      rotSpeed: (Math.random() - 0.5) * 0.01,
-      rot: Math.random() * Math.PI,
-      color: HEX_COLORS[Math.floor(Math.random() * HEX_COLORS.length)],
-    }));
-
-    const drawHexagon = (x: number, y: number, size: number, rot: number, color: string, alpha: number) => {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rot);
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i;
-        const px = size * Math.cos(angle);
-        const py = size * Math.sin(angle);
-        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = `${color}${alpha})`;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.restore();
-    };
-
-    // ── Floating binary orbs ──────────────────────────────────
-    interface Orb {
-      x: number;
-      y: number;
       r: number;
-      vx: number;
-      vy: number;
-      color: string;
+      type: 'hub' | 'node';
       pulse: number;
       pulseSpeed: number;
     }
 
-    const orbs: Orb[] = Array.from({ length: 6 }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: 60 + Math.random() * 80,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      color: Math.random() > 0.5 ? '6,182,212' : '16,185,129',
-      pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.01 + Math.random() * 0.02,
-    }));
+    interface Pulse {
+      fromIdx: number;
+      toIdx: number;
+      t: number;
+      speed: number;
+      attack: boolean;
+    }
 
-    // ── Scan lines ────────────────────────────────────────────
-    let scanY = 0;
+    let nodes: Node[] = [];
+    let pulses: Pulse[] = [];
+    let pulseTimer = 0;
 
-    // ── Connection lines between orbs ─────────────────────────
-    const drawConnections = () => {
-      for (let i = 0; i < orbs.length; i++) {
-        for (let j = i + 1; j < orbs.length; j++) {
-          const dx = orbs[i].x - orbs[j].x;
-          const dy = orbs[i].y - orbs[j].y;
+    const init = () => {
+      const count = Math.floor((W * H) / 22000);
+      nodes = Array.from({ length: Math.max(28, Math.min(count, 55)) }, (_, i) => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: i < 6 ? 4.5 : 2.5,
+        type: i < 6 ? 'hub' : 'node',
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.015 + Math.random() * 0.02,
+      }));
+      pulses = [];
+    };
+
+    init();
+
+    const MAX_DIST = 180;
+
+    const spawnPulse = () => {
+      const fromIdx = Math.floor(Math.random() * nodes.length);
+      // find a connected neighbour
+      let best = -1;
+      let bestDist = Infinity;
+      nodes.forEach((n, i) => {
+        if (i === fromIdx) return;
+        const dx = n.x - nodes[fromIdx].x;
+        const dy = n.y - nodes[fromIdx].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST && d < bestDist) { bestDist = d; best = i; }
+      });
+      if (best === -1) return;
+      pulses.push({
+        fromIdx,
+        toIdx: best,
+        t: 0,
+        speed: 0.006 + Math.random() * 0.006,
+        attack: Math.random() < 0.25,
+      });
+    };
+
+    const draw = () => {
+      // Fade trail
+      ctx.fillStyle = 'rgba(3, 10, 25, 0.18)';
+      ctx.fillRect(0, 0, W, H);
+
+      // Update nodes
+      nodes.forEach((n) => {
+        n.x += n.vx;
+        n.y += n.vy;
+        n.pulse += n.pulseSpeed;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+      });
+
+      // Draw edges
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 350) {
-            const alpha = (1 - dist / 350) * 0.15;
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.18;
+            const isHubEdge = nodes[i].type === 'hub' || nodes[j].type === 'hub';
             ctx.beginPath();
-            ctx.moveTo(orbs[i].x, orbs[i].y);
-            ctx.lineTo(orbs[j].x, orbs[j].y);
-            ctx.strokeStyle = `rgba(6,182,212,${alpha})`;
-            ctx.lineWidth = 0.5;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = isHubEdge
+              ? `rgba(6,182,212,${alpha * 1.8})`
+              : `rgba(100,200,180,${alpha})`;
+            ctx.lineWidth = isHubEdge ? 0.7 : 0.4;
             ctx.stroke();
           }
         }
       }
-    };
 
-    let frame = 0;
+      // Draw pulses
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i];
+        p.t += p.speed;
+        if (p.t >= 1) { pulses.splice(i, 1); continue; }
 
-    const draw = () => {
-      frame++;
+        const from = nodes[p.fromIdx];
+        const to = nodes[p.toIdx];
+        const px = from.x + (to.x - from.x) * p.t;
+        const py = from.y + (to.y - from.y) * p.t;
 
-      // ── Background ───────────────────────────────────────────
-      ctx.fillStyle = 'rgba(2, 8, 20, 0.85)';
-      ctx.fillRect(0, 0, W, H);
-
-      // ── Orbs ─────────────────────────────────────────────────
-      orbs.forEach((orb) => {
-        orb.x += orb.vx;
-        orb.y += orb.vy;
-        orb.pulse += orb.pulseSpeed;
-        if (orb.x < -orb.r) orb.x = W + orb.r;
-        if (orb.x > W + orb.r) orb.x = -orb.r;
-        if (orb.y < -orb.r) orb.y = H + orb.r;
-        if (orb.y > H + orb.r) orb.y = -orb.r;
-
-        const pulsedR = orb.r + Math.sin(orb.pulse) * 10;
-        const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, pulsedR);
-        g.addColorStop(0, `rgba(${orb.color},0.06)`);
-        g.addColorStop(0.5, `rgba(${orb.color},0.03)`);
-        g.addColorStop(1, `rgba(${orb.color},0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(orb.x, orb.y, pulsedR, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      drawConnections();
-
-      // ── Matrix rain ───────────────────────────────────────────
-      ctx.font = `${FONT_SIZE}px monospace`;
-      columns.forEach((y, i) => {
-        const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-        const x = i * FONT_SIZE;
-
-        // Head character — bright white/cyan
-        ctx.fillStyle = `rgba(180, 255, 255, ${0.9})`;
-        ctx.fillText(char, x, y);
-
-        // Trail characters
-        const trailChar = CHARS[Math.floor(Math.random() * CHARS.length)];
-        const trailAlpha = 0.08 + Math.random() * 0.12;
-        ctx.fillStyle = `rgba(6, 182, 212, ${trailAlpha})`;
-        ctx.fillText(trailChar, x, y - FONT_SIZE);
-
-        // Advance column
-        if (y > H + FONT_SIZE * 5 && Math.random() > 0.975) {
-          columns[i] = -FONT_SIZE * (5 + Math.random() * 20);
+        // Trail
+        const trailT = Math.max(0, p.t - 0.18);
+        const tx = from.x + (to.x - from.x) * trailT;
+        const ty = from.y + (to.y - from.y) * trailT;
+        const trail = ctx.createLinearGradient(tx, ty, px, py);
+        if (p.attack) {
+          trail.addColorStop(0, 'rgba(239,68,68,0)');
+          trail.addColorStop(1, 'rgba(239,68,68,0.9)');
         } else {
-          columns[i] = y + FONT_SIZE;
+          trail.addColorStop(0, 'rgba(6,182,212,0)');
+          trail.addColorStop(1, 'rgba(6,182,212,0.9)');
+        }
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = trail;
+        ctx.lineWidth = p.attack ? 2 : 1.5;
+        ctx.stroke();
+
+        // Head dot
+        const headColor = p.attack ? '239,68,68' : '6,182,212';
+        const g = ctx.createRadialGradient(px, py, 0, px, py, 7);
+        g.addColorStop(0, `rgba(${headColor},1)`);
+        g.addColorStop(1, `rgba(${headColor},0)`);
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+
+      // Draw nodes
+      nodes.forEach((n) => {
+        const pulse = Math.sin(n.pulse) * 0.35 + 0.65;
+        const isHub = n.type === 'hub';
+        const color = isHub ? '6,182,212' : '100,200,180';
+
+        // Outer glow
+        const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 5);
+        glow.addColorStop(0, `rgba(${color},${isHub ? 0.18 * pulse : 0.08 * pulse})`);
+        glow.addColorStop(1, `rgba(${color},0)`);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${color},${isHub ? 0.9 : 0.7})`;
+        ctx.fill();
+
+        // Hub ring
+        if (isHub) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r * 2.8 * pulse, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${color},0.2)`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
       });
 
-      // ── Hex particles ─────────────────────────────────────────
-      hexes.forEach((hex) => {
-        hex.x += hex.vx;
-        hex.y += hex.vy;
-        hex.rot += hex.rotSpeed;
-        if (hex.x < -hex.size) hex.x = W + hex.size;
-        if (hex.x > W + hex.size) hex.x = -hex.size;
-        if (hex.y < -hex.size) hex.y = H + hex.size;
-        if (hex.y > H + hex.size) hex.y = -hex.size;
-        drawHexagon(hex.x, hex.y, hex.size, hex.rot, hex.color, hex.alpha);
-      });
+      // Spawn pulses
+      pulseTimer++;
+      if (pulseTimer % 25 === 0) spawnPulse();
 
-      // ── Horizontal scan line ──────────────────────────────────
-      scanY = (scanY + 1.5) % H;
-      const scanGrad = ctx.createLinearGradient(0, scanY - 40, 0, scanY + 40);
-      scanGrad.addColorStop(0, 'rgba(6,182,212,0)');
-      scanGrad.addColorStop(0.5, 'rgba(6,182,212,0.04)');
-      scanGrad.addColorStop(1, 'rgba(6,182,212,0)');
-      ctx.fillStyle = scanGrad;
-      ctx.fillRect(0, scanY - 40, W, 80);
-
-      // ── Corner brackets ───────────────────────────────────────
-      const bSize = 30;
-      const bAlpha = 0.3 + 0.1 * Math.sin(frame * 0.02);
-      ctx.strokeStyle = `rgba(6,182,212,${bAlpha})`;
-      ctx.lineWidth = 1.5;
-      // TL
-      ctx.beginPath(); ctx.moveTo(20, 20 + bSize); ctx.lineTo(20, 20); ctx.lineTo(20 + bSize, 20); ctx.stroke();
-      // TR
-      ctx.beginPath(); ctx.moveTo(W - 20 - bSize, 20); ctx.lineTo(W - 20, 20); ctx.lineTo(W - 20, 20 + bSize); ctx.stroke();
-      // BL
-      ctx.beginPath(); ctx.moveTo(20, H - 20 - bSize); ctx.lineTo(20, H - 20); ctx.lineTo(20 + bSize, H - 20); ctx.stroke();
-      // BR
-      ctx.beginPath(); ctx.moveTo(W - 20 - bSize, H - 20); ctx.lineTo(W - 20, H - 20); ctx.lineTo(W - 20, H - 20 - bSize); ctx.stroke();
-
-      // ── Vignette ─────────────────────────────────────────────
-      const vig = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.9);
-      vig.addColorStop(0, 'rgba(0,0,0,0)');
-      vig.addColorStop(1, 'rgba(0,0,0,0.6)');
-      ctx.fillStyle = vig;
+      // Subtle center gradient overlay to make text readable
+      const centerFade = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.38);
+      centerFade.addColorStop(0, 'rgba(3,10,25,0.55)');
+      centerFade.addColorStop(1, 'rgba(3,10,25,0)');
+      ctx.fillStyle = centerFade;
       ctx.fillRect(0, 0, W, H);
 
       animationId = requestAnimationFrame(draw);
     };
 
+    // Warm up
+    for (let i = 0; i < 3; i++) spawnPulse();
     draw();
 
     return () => {
@@ -250,10 +228,17 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ background: 'rgb(3, 10, 25)' }}
+      />
 
-      {/* Bottom fade into next section */}
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_30%,rgba(3,10,25,0.5)_100%)]" />
+
+      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
