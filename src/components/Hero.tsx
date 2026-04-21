@@ -22,299 +22,221 @@ export function Hero() {
     if (!ctx) return;
 
     let animationId: number;
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    let W = (canvas.width = window.innerWidth);
+    let H = (canvas.height = window.innerHeight);
 
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      initColumns();
     };
     window.addEventListener('resize', handleResize);
 
-    // Node types: hub (major city/server), node (minor), attacker (red threat)
-    const NODE_COUNT = 60;
-    const ATTACKER_COUNT = 8;
-    const CONNECTION_DISTANCE = 160;
+    // ── Matrix rain ──────────────────────────────────────────
+    const FONT_SIZE = 14;
+    const CHARS = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF';
+    let columns: number[] = [];
 
-    interface Node {
+    const initColumns = () => {
+      const count = Math.floor(W / FONT_SIZE);
+      columns = Array.from({ length: count }, () => Math.random() * -H);
+    };
+    initColumns();
+
+    // ── Hex particles ─────────────────────────────────────────
+    interface Hex {
       x: number;
       y: number;
-      z: number;
+      size: number;
       vx: number;
       vy: number;
-      vz: number;
-      type: 'hub' | 'node' | 'attacker';
-      radius: number;
-      pulsePhase: number;
+      alpha: number;
+      fadeSpeed: number;
+      rotSpeed: number;
+      rot: number;
+      color: string;
+    }
+
+    const HEX_COLORS = [
+      'rgba(6,182,212,',   // cyan
+      'rgba(16,185,129,',  // emerald
+      'rgba(139,92,246,',  // violet
+    ];
+
+    const hexes: Hex[] = Array.from({ length: 28 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      size: 12 + Math.random() * 28,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      alpha: 0.03 + Math.random() * 0.08,
+      fadeSpeed: 0.001 + Math.random() * 0.002,
+      rotSpeed: (Math.random() - 0.5) * 0.01,
+      rot: Math.random() * Math.PI,
+      color: HEX_COLORS[Math.floor(Math.random() * HEX_COLORS.length)],
+    }));
+
+    const drawHexagon = (x: number, y: number, size: number, rot: number, color: string, alpha: number) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const px = size * Math.cos(angle);
+        const py = size * Math.sin(angle);
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = `${color}${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    // ── Floating binary orbs ──────────────────────────────────
+    interface Orb {
+      x: number;
+      y: number;
+      r: number;
+      vx: number;
+      vy: number;
+      color: string;
+      pulse: number;
       pulseSpeed: number;
     }
 
-    interface Packet {
-      fromIdx: number;
-      toIdx: number;
-      progress: number;
-      speed: number;
-      isAttack: boolean;
-    }
+    const orbs: Orb[] = Array.from({ length: 6 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 60 + Math.random() * 80,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      color: Math.random() > 0.5 ? '6,182,212' : '16,185,129',
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.01 + Math.random() * 0.02,
+    }));
 
-    const nodes: Node[] = [];
-    const packets: Packet[] = [];
+    // ── Scan lines ────────────────────────────────────────────
+    let scanY = 0;
 
-    // Create normal nodes
-    for (let i = 0; i < NODE_COUNT; i++) {
-      const isHub = i < 8;
-      nodes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        z: Math.random() * 400 - 200,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        vz: (Math.random() - 0.5) * 0.3,
-        type: isHub ? 'hub' : 'node',
-        radius: isHub ? 5 : 2.5,
-        pulsePhase: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.02 + Math.random() * 0.03,
-      });
-    }
-
-    // Create attacker nodes
-    for (let i = 0; i < ATTACKER_COUNT; i++) {
-      nodes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        z: Math.random() * 400 - 200,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        vz: (Math.random() - 0.5) * 0.5,
-        type: 'attacker',
-        radius: 4,
-        pulsePhase: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.05 + Math.random() * 0.05,
-      });
-    }
-
-    // Spawn packets periodically
-    let packetTimer = 0;
-    const spawnPacket = () => {
-      const attackerIndices = nodes
-        .map((n, i) => ({ n, i }))
-        .filter(({ n }) => n.type === 'attacker')
-        .map(({ i }) => i);
-
-      const hubIndices = nodes
-        .map((n, i) => ({ n, i }))
-        .filter(({ n }) => n.type === 'hub')
-        .map(({ i }) => i);
-
-      const normalIndices = nodes
-        .map((n, i) => ({ n, i }))
-        .filter(({ n }) => n.type === 'node')
-        .map(({ i }) => i);
-
-      // Attack packet: attacker → hub
-      if (attackerIndices.length > 0 && hubIndices.length > 0) {
-        packets.push({
-          fromIdx: attackerIndices[Math.floor(Math.random() * attackerIndices.length)],
-          toIdx: hubIndices[Math.floor(Math.random() * hubIndices.length)],
-          progress: 0,
-          speed: 0.008 + Math.random() * 0.006,
-          isAttack: true,
-        });
-      }
-
-      // Normal traffic packet: node → node
-      if (normalIndices.length > 1) {
-        const from = Math.floor(Math.random() * normalIndices.length);
-        let to = Math.floor(Math.random() * normalIndices.length);
-        while (to === from) to = Math.floor(Math.random() * normalIndices.length);
-        packets.push({
-          fromIdx: normalIndices[from],
-          toIdx: normalIndices[to],
-          progress: 0,
-          speed: 0.004 + Math.random() * 0.004,
-          isAttack: false,
-        });
-      }
-    };
-
-    // Project 3D → 2D with perspective
-    const project = (x: number, y: number, z: number) => {
-      const fov = 500;
-      const scale = fov / (fov + z);
-      return {
-        px: x * scale + (width * (1 - scale)) / 2,
-        py: y * scale + (height * (1 - scale)) / 2,
-        scale,
-      };
-    };
-
-    let time = 0;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Deep dark background
-      ctx.fillStyle = 'rgba(2, 8, 20, 1)';
-      ctx.fillRect(0, 0, width, height);
-
-      // Subtle radial glow center
-      const grad = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.6);
-      grad.addColorStop(0, 'rgba(6, 182, 212, 0.04)');
-      grad.addColorStop(0.5, 'rgba(16, 185, 129, 0.02)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-
-      time += 0.005;
-
-      // Update nodes
-      nodes.forEach((node) => {
-        node.x += node.vx;
-        node.y += node.vy;
-        node.z += node.vz;
-        node.pulsePhase += node.pulseSpeed;
-
-        // Bounce off boundaries
-        if (node.x < 0 || node.x > width) node.vx *= -1;
-        if (node.y < 0 || node.y > height) node.vy *= -1;
-        if (node.z < -200 || node.z > 200) node.vz *= -1;
-      });
-
-      // Draw connections between nearby nodes
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
+    // ── Connection lines between orbs ─────────────────────────
+    const drawConnections = () => {
+      for (let i = 0; i < orbs.length; i++) {
+        for (let j = i + 1; j < orbs.length; j++) {
+          const dx = orbs[i].x - orbs[j].x;
+          const dy = orbs[i].y - orbs[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < CONNECTION_DISTANCE) {
-            const pA = project(a.x, a.y, a.z);
-            const pB = project(b.x, b.y, b.z);
-            const alpha = (1 - dist / CONNECTION_DISTANCE) * 0.3;
-
-            const isAttackConnection = a.type === 'attacker' || b.type === 'attacker';
-            const isHubConnection = a.type === 'hub' || b.type === 'hub';
-
-            let strokeColor: string;
-            if (isAttackConnection) {
-              strokeColor = `rgba(239, 68, 68, ${alpha * 0.6})`;
-            } else if (isHubConnection) {
-              strokeColor = `rgba(6, 182, 212, ${alpha * 0.8})`;
-            } else {
-              strokeColor = `rgba(16, 185, 129, ${alpha * 0.5})`;
-            }
-
+          if (dist < 350) {
+            const alpha = (1 - dist / 350) * 0.15;
             ctx.beginPath();
-            ctx.moveTo(pA.px, pA.py);
-            ctx.lineTo(pB.px, pB.py);
-            ctx.strokeStyle = strokeColor;
-            ctx.lineWidth = isHubConnection ? 0.8 : 0.4;
+            ctx.moveTo(orbs[i].x, orbs[i].y);
+            ctx.lineTo(orbs[j].x, orbs[j].y);
+            ctx.strokeStyle = `rgba(6,182,212,${alpha})`;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
       }
+    };
 
-      // Draw packets
-      for (let i = packets.length - 1; i >= 0; i--) {
-        const packet = packets[i];
-        packet.progress += packet.speed;
+    let frame = 0;
 
-        if (packet.progress >= 1) {
-          packets.splice(i, 1);
-          continue;
-        }
+    const draw = () => {
+      frame++;
 
-        const from = nodes[packet.fromIdx];
-        const to = nodes[packet.toIdx];
-        const pFrom = project(from.x, from.y, from.z);
-        const pTo = project(to.x, to.y, to.z);
+      // ── Background ───────────────────────────────────────────
+      ctx.fillStyle = 'rgba(2, 8, 20, 0.85)';
+      ctx.fillRect(0, 0, W, H);
 
-        const px = pFrom.px + (pTo.px - pFrom.px) * packet.progress;
-        const py = pFrom.py + (pTo.py - pFrom.py) * packet.progress;
+      // ── Orbs ─────────────────────────────────────────────────
+      orbs.forEach((orb) => {
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+        orb.pulse += orb.pulseSpeed;
+        if (orb.x < -orb.r) orb.x = W + orb.r;
+        if (orb.x > W + orb.r) orb.x = -orb.r;
+        if (orb.y < -orb.r) orb.y = H + orb.r;
+        if (orb.y > H + orb.r) orb.y = -orb.r;
 
-        // Draw packet trail
-        const trailLength = 0.15;
-        const trailStart = Math.max(0, packet.progress - trailLength);
-        const trailX = pFrom.px + (pTo.px - pFrom.px) * trailStart;
-        const trailY = pFrom.py + (pTo.py - pFrom.py) * trailStart;
+        const pulsedR = orb.r + Math.sin(orb.pulse) * 10;
+        const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, pulsedR);
+        g.addColorStop(0, `rgba(${orb.color},0.06)`);
+        g.addColorStop(0.5, `rgba(${orb.color},0.03)`);
+        g.addColorStop(1, `rgba(${orb.color},0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, pulsedR, 0, Math.PI * 2);
+        ctx.fill();
+      });
 
-        const trailGrad = ctx.createLinearGradient(trailX, trailY, px, py);
-        if (packet.isAttack) {
-          trailGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
-          trailGrad.addColorStop(1, 'rgba(239, 68, 68, 0.9)');
+      drawConnections();
+
+      // ── Matrix rain ───────────────────────────────────────────
+      ctx.font = `${FONT_SIZE}px monospace`;
+      columns.forEach((y, i) => {
+        const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+        const x = i * FONT_SIZE;
+
+        // Head character — bright white/cyan
+        ctx.fillStyle = `rgba(180, 255, 255, ${0.9})`;
+        ctx.fillText(char, x, y);
+
+        // Trail characters
+        const trailChar = CHARS[Math.floor(Math.random() * CHARS.length)];
+        const trailAlpha = 0.08 + Math.random() * 0.12;
+        ctx.fillStyle = `rgba(6, 182, 212, ${trailAlpha})`;
+        ctx.fillText(trailChar, x, y - FONT_SIZE);
+
+        // Advance column
+        if (y > H + FONT_SIZE * 5 && Math.random() > 0.975) {
+          columns[i] = -FONT_SIZE * (5 + Math.random() * 20);
         } else {
-          trailGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
-          trailGrad.addColorStop(1, 'rgba(6, 182, 212, 0.9)');
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(trailX, trailY);
-        ctx.lineTo(px, py);
-        ctx.strokeStyle = trailGrad;
-        ctx.lineWidth = packet.isAttack ? 2 : 1.5;
-        ctx.stroke();
-
-        // Packet head glow
-        const glowColor = packet.isAttack ? '239, 68, 68' : '6, 182, 212';
-        const glowGrad = ctx.createRadialGradient(px, py, 0, px, py, 6);
-        glowGrad.addColorStop(0, `rgba(${glowColor}, 1)`);
-        glowGrad.addColorStop(1, `rgba(${glowColor}, 0)`);
-        ctx.beginPath();
-        ctx.arc(px, py, 6, 0, Math.PI * 2);
-        ctx.fillStyle = glowGrad;
-        ctx.fill();
-      }
-
-      // Draw nodes
-      nodes.forEach((node) => {
-        const p = project(node.x, node.y, node.z);
-        const pulse = Math.sin(node.pulsePhase) * 0.4 + 0.6;
-        const r = node.radius * p.scale;
-
-        let coreColor: string;
-        let glowColor: string;
-
-        if (node.type === 'attacker') {
-          coreColor = `rgba(239, 68, 68, ${pulse})`;
-          glowColor = '239, 68, 68';
-        } else if (node.type === 'hub') {
-          coreColor = `rgba(6, 182, 212, ${pulse})`;
-          glowColor = '6, 182, 212';
-        } else {
-          coreColor = `rgba(16, 185, 129, ${pulse * 0.8})`;
-          glowColor = '16, 185, 129';
-        }
-
-        // Outer glow
-        const glow = ctx.createRadialGradient(p.px, p.py, 0, p.px, p.py, r * 4);
-        glow.addColorStop(0, `rgba(${glowColor}, ${0.3 * pulse})`);
-        glow.addColorStop(1, `rgba(${glowColor}, 0)`);
-        ctx.beginPath();
-        ctx.arc(p.px, p.py, r * 4, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        // Core dot
-        ctx.beginPath();
-        ctx.arc(p.px, p.py, Math.max(r, 1), 0, Math.PI * 2);
-        ctx.fillStyle = coreColor;
-        ctx.fill();
-
-        // Hub ring
-        if (node.type === 'hub') {
-          ctx.beginPath();
-          ctx.arc(p.px, p.py, r * 2.5 + pulse * 2, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(6, 182, 212, ${0.2 * pulse})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          columns[i] = y + FONT_SIZE;
         }
       });
 
-      // Spawn packets every ~60 frames
-      packetTimer++;
-      if (packetTimer % 30 === 0) spawnPacket();
+      // ── Hex particles ─────────────────────────────────────────
+      hexes.forEach((hex) => {
+        hex.x += hex.vx;
+        hex.y += hex.vy;
+        hex.rot += hex.rotSpeed;
+        if (hex.x < -hex.size) hex.x = W + hex.size;
+        if (hex.x > W + hex.size) hex.x = -hex.size;
+        if (hex.y < -hex.size) hex.y = H + hex.size;
+        if (hex.y > H + hex.size) hex.y = -hex.size;
+        drawHexagon(hex.x, hex.y, hex.size, hex.rot, hex.color, hex.alpha);
+      });
+
+      // ── Horizontal scan line ──────────────────────────────────
+      scanY = (scanY + 1.5) % H;
+      const scanGrad = ctx.createLinearGradient(0, scanY - 40, 0, scanY + 40);
+      scanGrad.addColorStop(0, 'rgba(6,182,212,0)');
+      scanGrad.addColorStop(0.5, 'rgba(6,182,212,0.04)');
+      scanGrad.addColorStop(1, 'rgba(6,182,212,0)');
+      ctx.fillStyle = scanGrad;
+      ctx.fillRect(0, scanY - 40, W, 80);
+
+      // ── Corner brackets ───────────────────────────────────────
+      const bSize = 30;
+      const bAlpha = 0.3 + 0.1 * Math.sin(frame * 0.02);
+      ctx.strokeStyle = `rgba(6,182,212,${bAlpha})`;
+      ctx.lineWidth = 1.5;
+      // TL
+      ctx.beginPath(); ctx.moveTo(20, 20 + bSize); ctx.lineTo(20, 20); ctx.lineTo(20 + bSize, 20); ctx.stroke();
+      // TR
+      ctx.beginPath(); ctx.moveTo(W - 20 - bSize, 20); ctx.lineTo(W - 20, 20); ctx.lineTo(W - 20, 20 + bSize); ctx.stroke();
+      // BL
+      ctx.beginPath(); ctx.moveTo(20, H - 20 - bSize); ctx.lineTo(20, H - 20); ctx.lineTo(20 + bSize, H - 20); ctx.stroke();
+      // BR
+      ctx.beginPath(); ctx.moveTo(W - 20 - bSize, H - 20); ctx.lineTo(W - 20, H - 20); ctx.lineTo(W - 20, H - 20 - bSize); ctx.stroke();
+
+      // ── Vignette ─────────────────────────────────────────────
+      const vig = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.9);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.6)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
 
       animationId = requestAnimationFrame(draw);
     };
@@ -328,18 +250,10 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Cyber Network Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ background: 'rgb(2, 8, 20)' }}
-      />
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
-      {/* Subtle vignette overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_40%,rgba(2,8,20,0.7)_100%)]" />
-
-      {/* Bottom fade */}
+      {/* Bottom fade into next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
@@ -349,13 +263,8 @@ export function Hero() {
           transition={{ duration: 0.8 }}
           className="space-y-8"
         >
-          {/* Greeting badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-block"
-          >
+          {/* Badge */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="inline-block">
             <span className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-mono">
               &gt; Security Professional
             </span>
@@ -375,12 +284,7 @@ export function Hero() {
           </motion.h1>
 
           {/* Tagline */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="max-w-3xl mx-auto"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="max-w-3xl mx-auto">
             <p className="text-xl sm:text-2xl text-slate-300 font-mono">
               Cybersecurity | Cloud Security | Security Engineering
             </p>
@@ -393,30 +297,8 @@ export function Hero() {
             transition={{ delay: 0.7 }}
             className="max-w-2xl mx-auto text-lg text-slate-400"
           >
-            Designing secure systems at scale where threat detection, cloud security engineering and risk
-            converge.
+            Designing secure systems at scale where threat detection, cloud security engineering and risk converge.
           </motion.p>
-
-          {/* Legend */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex items-center justify-center gap-6 text-xs font-mono"
-          >
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" />
-              <span className="text-slate-500">Network Node</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
-              <span className="text-slate-500">Threat Actor</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-3 h-0.5 bg-red-400 inline-block" />
-              <span className="text-slate-500">Active Attack</span>
-            </span>
-          </motion.div>
 
           {/* CTA Buttons */}
           <motion.div
@@ -453,32 +335,22 @@ export function Hero() {
             transition={{ delay: 1.1 }}
             className="flex items-center justify-center gap-6 pt-8"
           >
-            <a
-              href="https://github.com/Mba205"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-            >
+            <a href="https://github.com/Mba205" target="_blank" rel="noopener noreferrer"
+              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all">
               <Github className="w-6 h-6 text-slate-400 group-hover:text-cyan-400 transition-colors" />
             </a>
-            <a
-              href="https://linkedin.com/in/mbanonna"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-            >
+            <a href="https://linkedin.com/in/mbanonna" target="_blank" rel="noopener noreferrer"
+              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all">
               <Linkedin className="w-6 h-6 text-slate-400 group-hover:text-cyan-400 transition-colors" />
             </a>
-            <a
-              href="mailto:mbanonna@gmail.com"
-              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-            >
+            <a href="mailto:mbanonna@gmail.com"
+              className="group p-3 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all">
               <Mail className="w-6 h-6 text-slate-400 group-hover:text-cyan-400 transition-colors" />
             </a>
           </motion.div>
         </motion.div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
