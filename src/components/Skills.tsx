@@ -123,7 +123,7 @@ export function Skills() {
     { name: 'Metasploit', icon: Crosshair, color: 'text-cyan-400' },
     { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
     { name: 'Nmap', icon: Server, color: 'text-orange-400' },
-    { name: 'Splunk', icon: Zap, color: 'text-red-400' },
+    { name: 'Splunk', icon: Zap, color: 'text-red-500' },
     { name: 'Git', icon: GitBranch, color: 'text-emerald-400' },
     { name: 'Kali Linux', icon: Terminal, color: 'text-cyan-400' },
     { name: 'Wazuh', icon: Activity, color: 'text-emerald-400' },
