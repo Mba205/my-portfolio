@@ -15,6 +15,9 @@ import {
   Eye,
   Layers,
   Zap,
+  Terminal,
+  Activity,
+  Crosshair
 } from 'lucide-react';
 
 export function Skills() {
@@ -117,13 +120,13 @@ export function Skills() {
     { name: 'Terraform', icon: Layers, color: 'text-orange-400' },
     { name: 'AWS CLI', icon: Cloud, color: 'text-cyan-400' },
     { name: 'Python', icon: Code, color: 'text-violet-400' },
-    { name: 'CloudTrail', icon: Database, color: 'text-cyan-400' },
+    { name: 'Metasploit', icon: Crosshair, color: 'text-cyan-400' },
     { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
     { name: 'Nmap', icon: Server, color: 'text-orange-400' },
     { name: 'Splunk', icon: Zap, color: 'text-violet-400' },
     { name: 'Git', icon: GitBranch, color: 'text-emerald-400' },
-    { name: 'Palo Alto', icon: Shield, color: 'text-cyan-400' },
-    { name: 'CrowdStrike', icon: Lock, color: 'text-emerald-400' },
+    { name: 'Kali Linux', icon: Terminal, color: 'text-cyan-400' },
+    { name: 'Wazuh', icon: Activity, color: 'text-emerald-400' },
   ];
 
   return (
