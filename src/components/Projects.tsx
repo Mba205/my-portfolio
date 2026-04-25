@@ -31,7 +31,7 @@ export function Projects() {
       tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging', 'Misconfiguration Remediation'],
       icon: Cloud,
       github: '',
-      demo: '',
+      demo: 'https://drive.google.com/drive/folders/1iO2Lacek5TJ4twnCoW0FVVhtL2QXW14h?usp=sharing',
       color: 'from-orange-500 to-red-500',
     },
     {
@@ -70,8 +70,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1764684809022-906c2daa23bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmNpZGVudCUyMHJlc3BvbnNlJTIwc2VjdXJpdHl8ZW58MXx8fHwxNzY0Njk0MjQ0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['Wireshark', 'Zeek', 'PCAP Analysis', 'TCP/IP', 'DNS Analysis', 'MITRE ATT&CK', 'BPF Filters', 'Intrusion Detection'],
       icon: Network,
-      github: '',
-      demo: '',
+      github: 'https://github.com/Mba205/network-traffic-analysis',
+      demo: 'https://drive.google.com/drive/folders/1GZ13yEcuQ-n_yq_xDgyWoIa6LsWQeTaX?usp=sharing',
       color: 'from-indigo-500 to-blue-500',
     },
   ];
