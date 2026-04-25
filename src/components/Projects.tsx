@@ -30,7 +30,7 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1664526937033-fe2c11f1be25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXR3b3JrJTIwZGlhZ3JhbSUyMGNsb3VkfGVufDF8fHx8MTc2NDY5NDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS (IAM, EC2, S3, CloudTrail, GuardDuty, VPC)', 'Cloud Security', 'Risk Analysis', 'Access Control', 'Logging', 'Misconfiguration Remediation'],
       icon: Cloud,
-      github: '',
+      github: 'https://github.com/Mba205/cloud-security-operations-governance-lab',
       demo: 'https://drive.google.com/drive/folders/1iO2Lacek5TJ4twnCoW0FVVhtL2QXW14h?usp=sharing',
       color: 'from-orange-500 to-red-500',
     },
