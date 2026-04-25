@@ -50,8 +50,8 @@ export function Projects() {
       image: 'https://images.unsplash.com/photo-1763718528755-4bca23f82ac3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wbGlhbmNlJTIwZGFzaGJvYXJkJTIwYW5hbHl0aWNzfGVufDF8fHx8MTc2NDY5NDI0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
       tech: ['AWS IAM', 'IAM Policies & Roles', 'Service Control Policies', 'AWS CLI', 'CloudTrail', 'Privilege Escalation', 'Permission Boundaries'],
       icon: Lock,
-      github: '',
-      demo: '',
+      github: 'https://github.com/Mba205/iam-security-and-privilege-escalation-lab',
+      demo: 'https://drive.google.com/drive/folders/1wp9SQwtfsMkrZKP3vxOMibajqLOs3d0i?usp=sharing',
       color: 'from-purple-500 to-pink-500',
     },
     {
