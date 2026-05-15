@@ -28,102 +28,296 @@ export function Hero() {
     const handleResize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
+      buildCircuit();
     };
     window.addEventListener('resize', handleResize);
 
-    // Aurora orbs — slow drifting gradient blobs
-    interface Orb {
-      x: number;
-      y: number;
-      r: number;
-      vx: number;
-      vy: number;
-      hue: number;
-      hueSpeed: number;
-      opacity: number;
+    // ── GRID CONFIG ──────────────────────────────────────
+    const CELL = 48;
+    const COLS = Math.ceil(W / CELL) + 1;
+    const ROWS = Math.ceil(H / CELL) + 1;
+
+    // ── CIRCUIT PATHS ────────────────────────────────────
+    interface Segment {
+      x1: number; y1: number;
+      x2: number; y2: number;
+      horizontal: boolean;
     }
 
-    const orbs: Orb[] = [
-      { x: W * 0.2,  y: H * 0.3,  r: W * 0.38, vx: 0.18,  vy: 0.12,  hue: 185, hueSpeed: 0.04,  opacity: 0.28 },
-      { x: W * 0.75, y: H * 0.6,  r: W * 0.32, vx: -0.14, vy: -0.10, hue: 260, hueSpeed: 0.035, opacity: 0.22 },
-      { x: W * 0.5,  y: H * 0.85, r: W * 0.28, vx: 0.10,  vy: -0.15, hue: 160, hueSpeed: 0.05,  opacity: 0.20 },
-      { x: W * 0.85, y: H * 0.15, r: W * 0.25, vx: -0.12, vy: 0.18,  hue: 210, hueSpeed: 0.03,  opacity: 0.18 },
-      { x: W * 0.1,  y: H * 0.75, r: W * 0.22, vx: 0.16,  vy: -0.08, hue: 290, hueSpeed: 0.045, opacity: 0.16 },
-    ];
-
-    // Stars / deep space particles
-    interface Star {
-      x: number;
-      y: number;
-      r: number;
-      alpha: number;
-      twinkleSpeed: number;
-      twinklePhase: number;
+    interface Node {
+      x: number; y: number;
+      type: 'via' | 'chip' | 'junction';
+      size: number;
+      pulse: number;
+      pulseSpeed: number;
     }
 
-    const stars: Star[] = Array.from({ length: 180 }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.2,
-      alpha: 0.2 + Math.random() * 0.6,
-      twinkleSpeed: 0.005 + Math.random() * 0.015,
-      twinklePhase: Math.random() * Math.PI * 2,
-    }));
+    interface Pulse {
+      segIdx: number;
+      t: number;
+      speed: number;
+      color: string;
+      size: number;
+      reverse: boolean;
+    }
 
-    let time = 0;
+    let segments: Segment[] = [];
+    let nodes: Node[] = [];
+    let pulses: Pulse[] = [];
+
+    const COLORS = {
+      trace:    'rgba(6,182,212,',
+      traceAlt: 'rgba(16,185,129,',
+      pulse:    'rgba(6,182,212,',
+      pulseAlt: 'rgba(16,185,129,',
+      via:      '#0891B2',
+      chip:     '#0F766E',
+      bg:       'rgb(2, 6, 16)',
+    };
+
+    const buildCircuit = () => {
+      segments = [];
+      nodes = [];
+      pulses = [];
+
+      // Build horizontal traces on grid rows
+      for (let row = 0; row < ROWS; row++) {
+        const y = row * CELL;
+        if (Math.random() > 0.45) continue;
+
+        let x = 0;
+        while (x < W) {
+          const len = (2 + Math.floor(Math.random() * 6)) * CELL;
+          const gap = (1 + Math.floor(Math.random() * 3)) * CELL;
+          if (x + len > W) break;
+
+          segments.push({ x1: x, y1: y, x2: x + len, y2: y, horizontal: true });
+
+          // Add junction node at corners
+          if (Math.random() > 0.6) {
+            nodes.push({
+              x: x, y,
+              type: Math.random() > 0.7 ? 'chip' : 'via',
+              size: Math.random() > 0.7 ? 6 : 3,
+              pulse: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.02 + Math.random() * 0.03,
+            });
+          }
+          if (Math.random() > 0.6) {
+            nodes.push({
+              x: x + len, y,
+              type: 'junction',
+              size: 2.5,
+              pulse: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.02 + Math.random() * 0.03,
+            });
+          }
+
+          x += len + gap;
+        }
+      }
+
+      // Build vertical traces on grid columns
+      for (let col = 0; col < COLS; col++) {
+        const x = col * CELL;
+        if (Math.random() > 0.45) continue;
+
+        let y = 0;
+        while (y < H) {
+          const len = (2 + Math.floor(Math.random() * 5)) * CELL;
+          const gap = (1 + Math.floor(Math.random() * 3)) * CELL;
+          if (y + len > H) break;
+
+          segments.push({ x1: x, y1: y, x2: x, y2: y + len, horizontal: false });
+
+          if (Math.random() > 0.65) {
+            nodes.push({
+              x, y: y + len,
+              type: Math.random() > 0.8 ? 'chip' : 'via',
+              size: Math.random() > 0.8 ? 5 : 3,
+              pulse: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.02 + Math.random() * 0.04,
+            });
+          }
+
+          y += len + gap;
+        }
+      }
+
+      // Add some chip blocks at intersections
+      for (let i = 0; i < 8; i++) {
+        const col = 1 + Math.floor(Math.random() * (COLS - 2));
+        const row = 1 + Math.floor(Math.random() * (ROWS - 2));
+        nodes.push({
+          x: col * CELL,
+          y: row * CELL,
+          type: 'chip',
+          size: 8 + Math.random() * 6,
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.015 + Math.random() * 0.02,
+        });
+      }
+
+      // Seed initial pulses
+      for (let i = 0; i < 18; i++) spawnPulse();
+    };
+
+    const spawnPulse = () => {
+      if (segments.length === 0) return;
+      const idx = Math.floor(Math.random() * segments.length);
+      pulses.push({
+        segIdx: idx,
+        t: Math.random(),
+        speed: 0.003 + Math.random() * 0.005,
+        color: Math.random() > 0.4 ? COLORS.pulse : COLORS.pulseAlt,
+        size: 2 + Math.random() * 2,
+        reverse: Math.random() > 0.5,
+      });
+    };
+
+    buildCircuit();
+
+    let frame = 0;
 
     const draw = () => {
-      time += 0.005;
+      frame++;
 
-      // Deep space base
-      ctx.fillStyle = 'rgb(4, 6, 18)';
+      // Deep dark base
+      ctx.fillStyle = COLORS.bg;
       ctx.fillRect(0, 0, W, H);
 
-      // Draw aurora orbs
-      orbs.forEach((orb) => {
-        orb.x += orb.vx;
-        orb.y += orb.vy;
-        orb.hue += orb.hueSpeed;
-
-        // Soft bounce
-        if (orb.x < -orb.r * 0.5) orb.vx = Math.abs(orb.vx);
-        if (orb.x > W + orb.r * 0.5) orb.vx = -Math.abs(orb.vx);
-        if (orb.y < -orb.r * 0.5) orb.vy = Math.abs(orb.vy);
-        if (orb.y > H + orb.r * 0.5) orb.vy = -Math.abs(orb.vy);
-
-        const pulse = 1 + 0.08 * Math.sin(time * 1.2 + orb.hue);
-        const r = orb.r * pulse;
-
-        const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, r);
-        g.addColorStop(0,   `hsla(${orb.hue}, 85%, 65%, ${orb.opacity})`);
-        g.addColorStop(0.4, `hsla(${orb.hue + 30}, 80%, 55%, ${orb.opacity * 0.6})`);
-        g.addColorStop(1,   `hsla(${orb.hue + 60}, 70%, 40%, 0)`);
-
-        ctx.beginPath();
-        ctx.arc(orb.x, orb.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
-      });
-
-      // Noise overlay to blend orbs (multiple semi-transparent passes)
-      ctx.globalCompositeOperation = 'source-over';
-
-      // Draw stars
-      stars.forEach((star) => {
-        star.twinklePhase += star.twinkleSpeed;
-        const alpha = star.alpha * (0.5 + 0.5 * Math.sin(star.twinklePhase));
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.fill();
-      });
-
-      // Subtle dark vignette to make text readable
-      const vignette = ctx.createRadialGradient(W / 2, H / 2, H * 0.1, W / 2, H / 2, H * 0.85);
-      vignette.addColorStop(0, 'rgba(4, 6, 18, 0)');
-      vignette.addColorStop(1, 'rgba(4, 6, 18, 0.65)');
-      ctx.fillStyle = vignette;
+      // Subtle radial glow at center
+      const centerGlow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W, H) * 0.6);
+      centerGlow.addColorStop(0, 'rgba(6,182,212,0.04)');
+      centerGlow.addColorStop(0.5, 'rgba(15,118,110,0.02)');
+      centerGlow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = centerGlow;
       ctx.fillRect(0, 0, W, H);
+
+      // ── DRAW TRACES ────────────────────────────────────
+      segments.forEach((seg, i) => {
+        const alpha = 0.12 + 0.05 * Math.sin(frame * 0.008 + i * 0.3);
+        const isAlt = i % 3 === 0;
+        ctx.beginPath();
+        ctx.moveTo(seg.x1, seg.y1);
+        ctx.lineTo(seg.x2, seg.y2);
+        ctx.strokeStyle = isAlt
+          ? `${COLORS.traceAlt}${alpha})`
+          : `${COLORS.trace}${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // ── DRAW NODES ─────────────────────────────────────
+      nodes.forEach((node) => {
+        node.pulse += node.pulseSpeed;
+        const p = Math.sin(node.pulse) * 0.4 + 0.6;
+
+        if (node.type === 'chip') {
+          // Square chip block
+          const s = node.size;
+          ctx.fillStyle = `rgba(15,118,110,${0.15 * p})`;
+          ctx.fillRect(node.x - s, node.y - s, s * 2, s * 2);
+          ctx.strokeStyle = `rgba(6,182,212,${0.4 * p})`;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(node.x - s, node.y - s, s * 2, s * 2);
+
+          // Inner cross lines on chip
+          ctx.strokeStyle = `rgba(6,182,212,${0.15 * p})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(node.x - s, node.y);
+          ctx.lineTo(node.x + s, node.y);
+          ctx.moveTo(node.x, node.y - s);
+          ctx.lineTo(node.x, node.y + s);
+          ctx.stroke();
+
+        } else if (node.type === 'via') {
+          // Round via hole
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(6,182,212,${0.5 * p})`;
+          ctx.fill();
+          ctx.strokeStyle = `rgba(6,182,212,${0.8 * p})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Glow ring
+          const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.size * 4);
+          g.addColorStop(0, `rgba(6,182,212,${0.12 * p})`);
+          g.addColorStop(1, 'rgba(6,182,212,0)');
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.size * 4, 0, Math.PI * 2);
+          ctx.fillStyle = g;
+          ctx.fill();
+
+        } else {
+          // Junction dot
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(16,185,129,${0.6 * p})`;
+          ctx.fill();
+        }
+      });
+
+      // ── DRAW PULSES ────────────────────────────────────
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const pulse = pulses[i];
+        const seg = segments[pulse.segIdx];
+        if (!seg) { pulses.splice(i, 1); continue; }
+
+        pulse.t += pulse.reverse ? -pulse.speed : pulse.speed;
+
+        if (pulse.t > 1 || pulse.t < 0) {
+          pulses.splice(i, 1);
+          spawnPulse();
+          continue;
+        }
+
+        const px = seg.x1 + (seg.x2 - seg.x1) * pulse.t;
+        const py = seg.y1 + (seg.y2 - seg.y1) * pulse.t;
+
+        // Trail
+        const trailT = Math.max(0, Math.min(1, pulse.t - (pulse.reverse ? -0.12 : 0.12)));
+        const tx = seg.x1 + (seg.x2 - seg.x1) * trailT;
+        const ty = seg.y1 + (seg.y2 - seg.y1) * trailT;
+
+        const trail = ctx.createLinearGradient(tx, ty, px, py);
+        trail.addColorStop(0, `${pulse.color}0)`);
+        trail.addColorStop(1, `${pulse.color}1)`);
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = trail;
+        ctx.lineWidth = pulse.size;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Head glow
+        const hg = ctx.createRadialGradient(px, py, 0, px, py, pulse.size * 4);
+        hg.addColorStop(0, `${pulse.color}1)`);
+        hg.addColorStop(1, `${pulse.color}0)`);
+        ctx.beginPath();
+        ctx.arc(px, py, pulse.size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = hg;
+        ctx.fill();
+
+        // Bright head dot
+        ctx.beginPath();
+        ctx.arc(px, py, pulse.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${pulse.color}1)`;
+        ctx.fill();
+      }
+
+      // Vignette to focus center
+      const vig = ctx.createRadialGradient(W/2, H/2, H * 0.2, W/2, H/2, H * 0.85);
+      vig.addColorStop(0, 'rgba(2,6,16,0)');
+      vig.addColorStop(1, 'rgba(2,6,16,0.75)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      // Spawn more pulses if needed
+      if (pulses.length < 20 && frame % 40 === 0) spawnPulse();
 
       animationId = requestAnimationFrame(draw);
     };
@@ -141,11 +335,11 @@ export function Hero() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'rgb(4, 6, 18)' }}
+        style={{ background: 'rgb(2, 6, 16)' }}
       />
 
-      {/* Bottom fade into next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-slate-950 to-transparent" />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <motion.div
