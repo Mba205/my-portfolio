@@ -24,490 +24,229 @@ export function Hero() {
     let animationId: number;
     let W = (canvas.width = window.innerWidth);
     let H = (canvas.height = window.innerHeight);
+    let mouse = { x: W / 2, y: H / 2 };
 
     const handleResize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
       init();
     };
+
+    const handleMouse = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+
     window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouse);
 
-    // ── TYPES ─────────────────────────────────────────────
-    interface Point { x: number; y: number; }
+    // ── CONFIG ────────────────────────────────────────────
+    const COUNT       = Math.floor((W * H) / 10000);
+    const MAX_DIST    = 140;
+    const MOUSE_DIST  = 180;
+    const MOUSE_FORCE = 0.012;
 
-    interface Trace {
-      points: Point[];   // polyline points (L/Z shaped segments)
-      color: string;
-      alpha: number;
-      alphaSpeed: number;
-      alphaPhase: number;
-    }
-
-    interface Chip {
+    interface Particle {
       x: number; y: number;
-      w: number; h: number;
-      label: string;
-      pulse: number;
-      pulseSpeed: number;
-      color: string;
-      central: boolean;
-    }
-
-    interface Via {
-      x: number; y: number;
+      vx: number; vy: number;
       r: number;
+      alpha: number;
       pulse: number;
       pulseSpeed: number;
+      color: string;
     }
 
-    interface Pulse {
-      trace: Trace;
+    interface Spark {
+      fromIdx: number;
+      toIdx: number;
       t: number;
       speed: number;
-      color: string;
-      reverse: boolean;
-      totalLen: number;
-      segLens: number[];
     }
 
-    let traces: Trace[] = [];
-    let chips: Chip[] = [];
-    let vias: Via[] = [];
-    let pulses: Pulse[] = [];
+    let particles: Particle[] = [];
+    let sparks: Spark[] = [];
+    let sparkTimer = 0;
 
-    const CYAN  = '6,182,212';
-    const GREEN = '16,185,129';
-    const TEAL  = '15,118,110';
+    const COLORS = ['6,182,212', '16,185,129', '139,92,246'];
 
-    // ── HELPERS ───────────────────────────────────────────
-    const snap = (v: number, g: number) => Math.round(v / g) * g;
-    const rnd  = (a: number, b: number) => a + Math.random() * (b - a);
-    const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-
-    // Build an L or Z shaped trace from start to end on a grid
-    const buildTrace = (x1: number, y1: number, x2: number, y2: number): Point[] => {
-      const style = Math.random();
-      if (style < 0.4) {
-        // L-shape: go horizontal first then vertical
-        return [{ x: x1, y: y1 }, { x: x2, y: y1 }, { x: x2, y: y2 }];
-      } else if (style < 0.7) {
-        // L-shape: go vertical first then horizontal
-        return [{ x: x1, y: y1 }, { x: x1, y: y2 }, { x: x2, y: y2 }];
-      } else {
-        // Z/S-shape: mid-point dogleg
-        const midX = snap((x1 + x2) / 2, 24);
-        return [
-          { x: x1,   y: y1 },
-          { x: midX, y: y1 },
-          { x: midX, y: y2 },
-          { x: x2,   y: y2 },
-        ];
-      }
-    };
-
-    // Total length of a polyline
-    const polyLen = (pts: Point[]) => {
-      let total = 0;
-      for (let i = 1; i < pts.length; i++) {
-        const dx = pts[i].x - pts[i-1].x;
-        const dy = pts[i].y - pts[i-1].y;
-        total += Math.sqrt(dx*dx + dy*dy);
-      }
-      return total;
-    };
-
-    // Segment lengths of a polyline
-    const segLengths = (pts: Point[]) => {
-      const lens: number[] = [];
-      for (let i = 1; i < pts.length; i++) {
-        const dx = pts[i].x - pts[i-1].x;
-        const dy = pts[i].y - pts[i-1].y;
-        lens.push(Math.sqrt(dx*dx + dy*dy));
-      }
-      return lens;
-    };
-
-    // Point along polyline at distance d from start
-    const pointOnPoly = (pts: Point[], segLens: number[], d: number): Point => {
-      let remaining = d;
-      for (let i = 0; i < segLens.length; i++) {
-        if (remaining <= segLens[i]) {
-          const t = remaining / segLens[i];
-          return {
-            x: pts[i].x + (pts[i+1].x - pts[i].x) * t,
-            y: pts[i].y + (pts[i+1].y - pts[i].y) * t,
-          };
-        }
-        remaining -= segLens[i];
-      }
-      return pts[pts.length - 1];
-    };
-
-    // ── INIT ──────────────────────────────────────────────
     const init = () => {
-      traces = [];
-      chips  = [];
-      vias   = [];
-      pulses = [];
+      particles = Array.from({ length: COUNT }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: 0.8 + Math.random() * 1.4,
+        alpha: 0.3 + Math.random() * 0.5,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.008 + Math.random() * 0.015,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      }));
+      sparks = [];
+    };
 
-      const cx = W / 2;
-      const cy = H / 2;
-      const GRID = 40;
-
-      // ── CENTRAL CPU ──────────────────────────────────────
-      const cpuW = Math.min(180, W * 0.18);
-      const cpuH = Math.min(180, H * 0.22);
-      chips.push({
-        x: cx, y: cy,
-        w: cpuW, h: cpuH,
-        label: 'CPU',
-        pulse: 0,
-        pulseSpeed: 0.02,
-        color: CYAN,
-        central: true,
-      });
-
-      // ── SATELLITE CHIPS ──────────────────────────────────
-      const satellites: { dx: number; dy: number; w: number; h: number; label: string }[] = [
-        { dx: -W * 0.30, dy: -H * 0.25, w: 70, h: 50, label: 'MEM' },
-        { dx:  W * 0.30, dy: -H * 0.25, w: 70, h: 50, label: 'GPU' },
-        { dx: -W * 0.30, dy:  H * 0.25, w: 60, h: 45, label: 'I/O' },
-        { dx:  W * 0.30, dy:  H * 0.25, w: 60, h: 45, label: 'NET' },
-        { dx: -W * 0.42, dy:  0,        w: 50, h: 40, label: 'DMA' },
-        { dx:  W * 0.42, dy:  0,        w: 50, h: 40, label: 'PCIe' },
-        { dx:  0,        dy: -H * 0.35, w: 55, h: 38, label: 'CLK' },
-        { dx:  0,        dy:  H * 0.35, w: 55, h: 38, label: 'PWR' },
-      ];
-
-      satellites.forEach(s => {
-        const sx = snap(cx + s.dx, GRID);
-        const sy = snap(cy + s.dy, GRID);
-        chips.push({
-          x: sx, y: sy,
-          w: s.w, h: s.h,
-          label: s.label,
-          pulse: Math.random() * Math.PI * 2,
-          pulseSpeed: 0.015 + Math.random() * 0.025,
-          color: pick([CYAN, GREEN, TEAL]),
-          central: false,
-        });
-      });
-
-      // ── TRACES from CPU to each satellite ────────────────
-      chips.slice(1).forEach(chip => {
-        // 1-3 traces per satellite
-        const count = 1 + Math.floor(Math.random() * 3);
-        for (let i = 0; i < count; i++) {
-          // Start: edge of central CPU
-          const startX = snap(cx + rnd(-cpuW/2, cpuW/2), GRID);
-          const startY = snap(cy + rnd(-cpuH/2, cpuH/2), GRID);
-          // End: edge of satellite chip
-          const endX   = snap(chip.x + rnd(-chip.w/2, chip.w/2), GRID);
-          const endY   = snap(chip.y + rnd(-chip.h/2, chip.h/2), GRID);
-
-          const points = buildTrace(startX, startY, endX, endY);
-          traces.push({
-            points,
-            color: pick([CYAN, GREEN, TEAL]),
-            alpha: 0.1 + Math.random() * 0.1,
-            alphaSpeed: 0.008 + Math.random() * 0.01,
-            alphaPhase: Math.random() * Math.PI * 2,
-          });
-
-          // Via at each bend point
-          for (let p = 1; p < points.length - 1; p++) {
-            vias.push({
-              x: points[p].x,
-              y: points[p].y,
-              r: 3 + Math.random() * 2,
-              pulse: Math.random() * Math.PI * 2,
-              pulseSpeed: 0.02 + Math.random() * 0.03,
-            });
-          }
-        }
-      });
-
-      // ── BACKGROUND fill traces (random routed lines) ─────
-      for (let i = 0; i < 35; i++) {
-        const x1 = snap(rnd(0, W), GRID);
-        const y1 = snap(rnd(0, H), GRID);
-        const x2 = snap(x1 + rnd(-W*0.3, W*0.3), GRID);
-        const y2 = snap(y1 + rnd(-H*0.3, H*0.3), GRID);
-        const pts = buildTrace(x1, y1, x2, y2);
-        traces.push({
-          points: pts,
-          color: pick([CYAN, GREEN, TEAL]),
-          alpha: 0.05 + Math.random() * 0.07,
-          alphaSpeed: 0.005 + Math.random() * 0.01,
-          alphaPhase: Math.random() * Math.PI * 2,
-        });
-
-        // Background vias
-        if (Math.random() > 0.5) {
-          vias.push({
-            x: pts[Math.floor(pts.length / 2)].x,
-            y: pts[Math.floor(pts.length / 2)].y,
-            r: 2,
-            pulse: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.015 + Math.random() * 0.02,
-          });
-        }
+    const spawnSpark = () => {
+      const a = Math.floor(Math.random() * particles.length);
+      let b = -1;
+      let best = Infinity;
+      for (let i = 0; i < particles.length; i++) {
+        if (i === a) continue;
+        const dx = particles[i].x - particles[a].x;
+        const dy = particles[i].y - particles[a].y;
+        const d = dx * dx + dy * dy;
+        if (d < best && d < MAX_DIST * MAX_DIST) { best = d; b = i; }
       }
-
-      // ── SEED PULSES ───────────────────────────────────────
-      // Prioritize main traces (chip-to-chip)
-      for (let i = 0; i < 22; i++) spawnPulse();
+      if (b === -1) return;
+      sparks.push({ fromIdx: a, toIdx: b, t: 0, speed: 0.012 + Math.random() * 0.018 });
     };
 
-    const spawnPulse = () => {
-      if (traces.length === 0) return;
-      // Weight toward first traces (chip-to-chip routes)
-      const maxIdx = Math.min(traces.length - 1, Math.floor(traces.length * 0.6));
-      const idx = Math.floor(Math.random() * maxIdx);
-      const trace = traces[idx];
-      const sLens = segLengths(trace.points);
-      const tLen  = sLens.reduce((a, b) => a + b, 0);
-      if (tLen < 10) return;
-      pulses.push({
-        trace,
-        t: Math.random() * tLen,
-        speed: 0.8 + Math.random() * 1.2,
-        color: pick([CYAN, GREEN]),
-        reverse: Math.random() > 0.5,
-        totalLen: tLen,
-        segLens: sLens,
-      });
-    };
-
-    let frame = 0;
+    init();
 
     const draw = () => {
-      frame++;
-
-      // Background
-      ctx.fillStyle = 'rgb(2, 6, 16)';
+      // Fade trail
+      ctx.fillStyle = 'rgba(3, 8, 22, 0.2)';
       ctx.fillRect(0, 0, W, H);
 
-      // Subtle center glow
-      const cg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.5);
-      cg.addColorStop(0, 'rgba(6,182,212,0.05)');
-      cg.addColorStop(0.4, 'rgba(15,118,110,0.02)');
-      cg.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = cg;
-      ctx.fillRect(0, 0, W, H);
-
-      // ── DRAW TRACES ──────────────────────────────────────
-      traces.forEach((trace) => {
-        trace.alphaPhase += trace.alphaSpeed;
-        const a = trace.alpha + 0.04 * Math.sin(trace.alphaPhase);
-        ctx.beginPath();
-        ctx.moveTo(trace.points[0].x, trace.points[0].y);
-        for (let i = 1; i < trace.points.length; i++) {
-          ctx.lineTo(trace.points[i].x, trace.points[i].y);
+      // Update + draw particles
+      particles.forEach((p, idx) => {
+        // Mouse repulsion
+        const mdx = p.x - mouse.x;
+        const mdy = p.y - mouse.y;
+        const md  = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (md < MOUSE_DIST && md > 0) {
+          const force = (1 - md / MOUSE_DIST) * MOUSE_FORCE;
+          p.vx += (mdx / md) * force;
+          p.vy += (mdy / md) * force;
         }
-        ctx.strokeStyle = `rgba(${trace.color},${a})`;
-        ctx.lineWidth = 1;
-        ctx.lineJoin = 'miter';
-        ctx.stroke();
-      });
 
-      // ── DRAW VIAS ─────────────────────────────────────────
-      vias.forEach((via) => {
-        via.pulse += via.pulseSpeed;
-        const p = 0.5 + 0.5 * Math.sin(via.pulse);
+        // Gentle friction
+        p.vx *= 0.995;
+        p.vy *= 0.995;
 
-        // Glow
-        const g = ctx.createRadialGradient(via.x, via.y, 0, via.x, via.y, via.r * 5);
-        g.addColorStop(0, `rgba(${CYAN},${0.15 * p})`);
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(via.x, via.y, via.r * 5, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.pulse += p.pulseSpeed;
 
-        // Core
-        ctx.beginPath();
-        ctx.arc(via.x, via.y, via.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${CYAN},${0.7 * p})`;
-        ctx.fill();
-        ctx.strokeStyle = `rgba(${CYAN},${0.9 * p})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      });
+        // Soft boundary wrap
+        if (p.x < -20) p.x = W + 20;
+        if (p.x > W + 20) p.x = -20;
+        if (p.y < -20) p.y = H + 20;
+        if (p.y > H + 20) p.y = -20;
 
-      // ── DRAW CHIPS ────────────────────────────────────────
-      chips.forEach((chip) => {
-        chip.pulse += chip.pulseSpeed;
-        const p = 0.5 + 0.5 * Math.sin(chip.pulse);
-        const hw = chip.w / 2;
-        const hh = chip.h / 2;
-
-        if (chip.central) {
-          // Central CPU — more elaborate
-          // Outer glow
-          const og = ctx.createRadialGradient(chip.x, chip.y, 0, chip.x, chip.y, hw * 2.5);
-          og.addColorStop(0, `rgba(${CYAN},${0.15 * p})`);
-          og.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = og;
-          ctx.fillRect(chip.x - hw*2.5, chip.y - hh*2.5, hw*5, hh*5);
-
-          // Outer ring
-          ctx.strokeStyle = `rgba(${CYAN},${0.15 * p})`;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(chip.x - hw - 10, chip.y - hh - 10, chip.w + 20, chip.h + 20);
-
-          // Main body fill
-          ctx.fillStyle = `rgba(${TEAL},0.12)`;
-          ctx.fillRect(chip.x - hw, chip.y - hh, chip.w, chip.h);
-
-          // Main body border
-          ctx.strokeStyle = `rgba(${CYAN},${0.5 + 0.3 * p})`;
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(chip.x - hw, chip.y - hh, chip.w, chip.h);
-
-          // Inner grid lines (die shot look)
-          const gridStep = chip.w / 4;
-          ctx.strokeStyle = `rgba(${CYAN},${0.08 * p})`;
-          ctx.lineWidth = 0.5;
-          for (let gx = 1; gx < 4; gx++) {
+        // Draw connections
+        for (let j = idx + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.18;
             ctx.beginPath();
-            ctx.moveTo(chip.x - hw + gx * gridStep, chip.y - hh);
-            ctx.lineTo(chip.x - hw + gx * gridStep, chip.y + hh);
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = `rgba(${p.color},${alpha})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
-          const gridStepY = chip.h / 4;
-          for (let gy = 1; gy < 4; gy++) {
-            ctx.beginPath();
-            ctx.moveTo(chip.x - hw, chip.y - hh + gy * gridStepY);
-            ctx.lineTo(chip.x + hw, chip.y - hh + gy * gridStepY);
-            ctx.stroke();
-          }
+        }
 
-          // Center core glow
-          const core = ctx.createRadialGradient(chip.x, chip.y, 0, chip.x, chip.y, hw * 0.4);
-          core.addColorStop(0, `rgba(${CYAN},${0.25 * p})`);
-          core.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = core;
-          ctx.fillRect(chip.x - hw*0.4, chip.y - hh*0.4, hw*0.8, hh*0.8);
-
-          // Label
-          ctx.fillStyle = `rgba(${CYAN},${0.6 * p})`;
-          ctx.font = `bold ${Math.floor(hw * 0.22)}px monospace`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('CPU', chip.x, chip.y);
-
-          // Corner brackets
-          const bLen = 12;
-          ctx.strokeStyle = `rgba(${CYAN},${0.7 * p})`;
-          ctx.lineWidth = 1.5;
-          [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([sx,sy]) => {
-            const bx = chip.x + sx * hw;
-            const by = chip.y + sy * hh;
-            ctx.beginPath();
-            ctx.moveTo(bx, by + sy * bLen);
-            ctx.lineTo(bx, by);
-            ctx.lineTo(bx + sx * bLen, by);
-            ctx.stroke();
-          });
-
-        } else {
-          // Satellite chip
-          ctx.fillStyle = `rgba(${chip.color},0.08)`;
-          ctx.fillRect(chip.x - hw, chip.y - hh, chip.w, chip.h);
-          ctx.strokeStyle = `rgba(${chip.color},${0.35 + 0.2 * p})`;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(chip.x - hw, chip.y - hh, chip.w, chip.h);
-
-          // Inner divider line
-          ctx.strokeStyle = `rgba(${chip.color},${0.08 * p})`;
-          ctx.lineWidth = 0.5;
+        // Draw mouse connections
+        const mDist = Math.sqrt((p.x - mouse.x) ** 2 + (p.y - mouse.y) ** 2);
+        if (mDist < MOUSE_DIST) {
+          const alpha = (1 - mDist / MOUSE_DIST) * 0.25;
           ctx.beginPath();
-          ctx.moveTo(chip.x - hw, chip.y);
-          ctx.lineTo(chip.x + hw, chip.y);
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(6,182,212,${alpha})`;
+          ctx.lineWidth = 0.5;
           ctx.stroke();
-
-          // Label
-          ctx.fillStyle = `rgba(${chip.color},${0.5 * p})`;
-          ctx.font = `bold ${Math.floor(Math.min(hw, hh) * 0.35)}px monospace`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(chip.label, chip.x, chip.y);
         }
+
+        // Draw dot
+        const pAlpha = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+        glow.addColorStop(0, `rgba(${p.color},${pAlpha * 0.4})`);
+        glow.addColorStop(1, `rgba(${p.color},0)`);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color},${pAlpha})`;
+        ctx.fill();
       });
 
-      // ── DRAW PULSES ───────────────────────────────────────
-      for (let i = pulses.length - 1; i >= 0; i--) {
-        const pulse = pulses[i];
-        pulse.t += pulse.reverse ? -pulse.speed : pulse.speed;
+      // Draw mouse dot
+      const mglow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 20);
+      mglow.addColorStop(0, 'rgba(6,182,212,0.15)');
+      mglow.addColorStop(1, 'rgba(6,182,212,0)');
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = mglow;
+      ctx.fill();
 
-        if (pulse.t > pulse.totalLen) {
-          if (pulse.reverse) pulse.t = pulse.totalLen;
-          else pulse.t = 0;
-          // small chance to respawn on a different trace
-          if (Math.random() > 0.7) {
-            pulses.splice(i, 1);
-            spawnPulse();
-            continue;
-          }
-          pulse.reverse = !pulse.reverse;
-        }
-        if (pulse.t < 0) {
-          pulse.t = 0;
-          pulse.reverse = !pulse.reverse;
-        }
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(6,182,212,0.6)';
+      ctx.fill();
 
-        const pos  = pointOnPoly(pulse.trace.points, pulse.segLens, pulse.t);
-        const trailDist = Math.min(pulse.totalLen * 0.15, 60);
-        const trailT = Math.max(0, Math.min(pulse.totalLen, pulse.t - (pulse.reverse ? -trailDist : trailDist)));
-        const trailPos = pointOnPoly(pulse.trace.points, pulse.segLens, trailT);
+      // Draw sparks
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.t += s.speed;
+        if (s.t >= 1) { sparks.splice(i, 1); continue; }
+
+        const from = particles[s.fromIdx];
+        const to   = particles[s.toIdx];
+        const sx   = from.x + (to.x - from.x) * s.t;
+        const sy   = from.y + (to.y - from.y) * s.t;
 
         // Trail
-        const tr = ctx.createLinearGradient(trailPos.x, trailPos.y, pos.x, pos.y);
-        tr.addColorStop(0, `rgba(${pulse.color},0)`);
-        tr.addColorStop(1, `rgba(${pulse.color},0.9)`);
+        const trailT = Math.max(0, s.t - 0.18);
+        const tx = from.x + (to.x - from.x) * trailT;
+        const ty = from.y + (to.y - from.y) * trailT;
+
+        const grad = ctx.createLinearGradient(tx, ty, sx, sy);
+        grad.addColorStop(0, 'rgba(6,182,212,0)');
+        grad.addColorStop(1, 'rgba(6,182,212,0.9)');
         ctx.beginPath();
-        ctx.moveTo(trailPos.x, trailPos.y);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.strokeStyle = tr;
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(sx, sy);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Head glow
-        const hg = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 10);
-        hg.addColorStop(0, `rgba(${pulse.color},0.8)`);
-        hg.addColorStop(1, `rgba(${pulse.color},0)`);
+        // Head
+        const hg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 6);
+        hg.addColorStop(0, 'rgba(6,182,212,0.9)');
+        hg.addColorStop(1, 'rgba(6,182,212,0)');
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+        ctx.arc(sx, sy, 6, 0, Math.PI * 2);
         ctx.fillStyle = hg;
-        ctx.fill();
-
-        // Head dot
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${pulse.color},1)`;
         ctx.fill();
       }
 
-      // Vignette
-      const vig = ctx.createRadialGradient(W/2, H/2, H*0.15, W/2, H/2, H*0.9);
-      vig.addColorStop(0, 'rgba(2,6,16,0)');
-      vig.addColorStop(1, 'rgba(2,6,16,0.8)');
+      // Subtle vignette
+      const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
+      vig.addColorStop(0, 'rgba(3,8,22,0)');
+      vig.addColorStop(1, 'rgba(3,8,22,0.65)');
       ctx.fillStyle = vig;
       ctx.fillRect(0, 0, W, H);
 
-      if (pulses.length < 22 && frame % 50 === 0) spawnPulse();
+      // Spawn sparks
+      sparkTimer++;
+      if (sparkTimer % 35 === 0 && sparks.length < 8) spawnSpark();
 
       animationId = requestAnimationFrame(draw);
     };
 
-    init();
     draw();
 
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouse);
     };
   }, []);
 
@@ -516,10 +255,9 @@ export function Hero() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'rgb(2, 6, 16)' }}
+        style={{ background: 'rgb(3, 8, 22)' }}
       />
 
-      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
