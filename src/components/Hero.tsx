@@ -24,219 +24,138 @@ export function Hero() {
     let animationId: number;
     let W = (canvas.width = window.innerWidth);
     let H = (canvas.height = window.innerHeight);
-    let mouse = { x: W / 2, y: H / 2 };
 
     const handleResize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      init();
     };
-
-    const handleMouse = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
-
     window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouse);
 
-    // ── CONFIG ────────────────────────────────────────────
-    const COUNT       = Math.floor((W * H) / 10000);
-    const MAX_DIST    = 140;
-    const MOUSE_DIST  = 180;
-    const MOUSE_FORCE = 0.012;
-
-    interface Particle {
-      x: number; y: number;
-      vx: number; vy: number;
-      r: number;
-      alpha: number;
-      pulse: number;
-      pulseSpeed: number;
-      color: string;
+    // ── MESH POINTS ───────────────────────────────────────
+    // A small grid of gradient control points that drift slowly
+    interface MeshPoint {
+      x: number; y: number;    // current position
+      tx: number; ty: number;  // target position
+      ox: number; oy: number;  // origin position
+      vx: number; vy: number;  // velocity
+      hue: number;
+      hueSpeed: number;
+      radius: number;
+      opacity: number;
+      opacityTarget: number;
+      opacitySpeed: number;
     }
 
-    interface Spark {
-      fromIdx: number;
-      toIdx: number;
-      t: number;
-      speed: number;
-    }
+    const points: MeshPoint[] = [
+      // Scattered across screen at different depths
+      { x: W*0.15, y: H*0.20, tx:0, ty:0, ox:W*0.15, oy:H*0.20, vx:0, vy:0, hue:195, hueSpeed:0.04, radius:W*0.35, opacity:0, opacityTarget:0.55, opacitySpeed:0.003 },
+      { x: W*0.80, y: H*0.15, tx:0, ty:0, ox:W*0.80, oy:H*0.15, vx:0, vy:0, hue:260, hueSpeed:0.03, radius:W*0.30, opacity:0, opacityTarget:0.40, opacitySpeed:0.002 },
+      { x: W*0.50, y: H*0.75, tx:0, ty:0, ox:W*0.50, oy:H*0.75, vx:0, vy:0, hue:170, hueSpeed:0.05, radius:W*0.32, opacity:0, opacityTarget:0.45, opacitySpeed:0.004 },
+      { x: W*0.85, y: H*0.80, tx:0, ty:0, ox:W*0.85, oy:H*0.80, vx:0, vy:0, hue:220, hueSpeed:0.035, radius:W*0.28, opacity:0, opacityTarget:0.35, opacitySpeed:0.003 },
+      { x: W*0.10, y: H*0.70, tx:0, ty:0, ox:W*0.10, oy:H*0.70, vx:0, vy:0, hue:280, hueSpeed:0.045, radius:W*0.25, opacity:0, opacityTarget:0.30, opacitySpeed:0.002 },
+      { x: W*0.60, y: H*0.40, tx:0, ty:0, ox:W*0.60, oy:H*0.40, vx:0, vy:0, hue:185, hueSpeed:0.025, radius:W*0.22, opacity:0, opacityTarget:0.25, opacitySpeed:0.003 },
+    ];
 
-    let particles: Particle[] = [];
-    let sparks: Spark[] = [];
-    let sparkTimer = 0;
-
-    const COLORS = ['6,182,212', '16,185,129', '139,92,246'];
-
-    const init = () => {
-      particles = Array.from({ length: COUNT }, () => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        r: 0.8 + Math.random() * 1.4,
-        alpha: 0.3 + Math.random() * 0.5,
-        pulse: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.008 + Math.random() * 0.015,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      }));
-      sparks = [];
+    // Randomize targets for each point (they wander within bounds)
+    const newTarget = (p: MeshPoint) => {
+      p.tx = p.ox + (Math.random() - 0.5) * W * 0.25;
+      p.ty = p.oy + (Math.random() - 0.5) * H * 0.25;
     };
+    points.forEach(p => newTarget(p));
 
-    const spawnSpark = () => {
-      const a = Math.floor(Math.random() * particles.length);
-      let b = -1;
-      let best = Infinity;
-      for (let i = 0; i < particles.length; i++) {
-        if (i === a) continue;
-        const dx = particles[i].x - particles[a].x;
-        const dy = particles[i].y - particles[a].y;
-        const d = dx * dx + dy * dy;
-        if (d < best && d < MAX_DIST * MAX_DIST) { best = d; b = i; }
-      }
-      if (b === -1) return;
-      sparks.push({ fromIdx: a, toIdx: b, t: 0, speed: 0.012 + Math.random() * 0.018 });
-    };
+    // ── NOISE GRID for organic texture ───────────────────
+    // Simple pseudo-noise using layered sin waves
+    const noise = (x: number, y: number, t: number) =>
+      Math.sin(x * 0.008 + t * 0.4) * Math.cos(y * 0.006 + t * 0.3) * 0.5 +
+      Math.sin(x * 0.015 + y * 0.01 + t * 0.6) * 0.3 +
+      Math.cos(x * 0.005 - y * 0.012 + t * 0.2) * 0.2;
 
-    init();
+    let time = 0;
 
     const draw = () => {
-      // Fade trail
-      ctx.fillStyle = 'rgba(3, 8, 22, 0.2)';
+      time += 0.004;
+
+      // Deep base
+      ctx.fillStyle = 'rgb(3, 7, 20)';
       ctx.fillRect(0, 0, W, H);
 
-      // Update + draw particles
-      particles.forEach((p, idx) => {
-        // Mouse repulsion
-        const mdx = p.x - mouse.x;
-        const mdy = p.y - mouse.y;
-        const md  = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (md < MOUSE_DIST && md > 0) {
-          const force = (1 - md / MOUSE_DIST) * MOUSE_FORCE;
-          p.vx += (mdx / md) * force;
-          p.vy += (mdy / md) * force;
+      // ── DRAW MESH GRADIENT BLOBS ──────────────────────
+      points.forEach((p) => {
+        // Drift toward target
+        const dx = p.tx - p.x;
+        const dy = p.ty - p.y;
+        p.vx += dx * 0.0004;
+        p.vy += dy * 0.0004;
+        p.vx *= 0.96;
+        p.vy *= 0.96;
+        p.x  += p.vx;
+        p.y  += p.vy;
+
+        // If close to target, pick a new one
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) newTarget(p);
+
+        // Hue drift
+        p.hue += p.hueSpeed;
+
+        // Opacity breathe
+        p.opacity += (p.opacityTarget - p.opacity) * p.opacitySpeed;
+        if (Math.abs(p.opacity - p.opacityTarget) < 0.005) {
+          p.opacityTarget = 0.15 + Math.random() * 0.45;
         }
 
-        // Gentle friction
-        p.vx *= 0.995;
-        p.vy *= 0.995;
+        // Draw radial gradient blob
+        const r = p.radius * (1 + 0.12 * noise(p.x, p.y, time));
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+        grad.addColorStop(0,   `hsla(${p.hue}, 85%, 60%, ${p.opacity})`);
+        grad.addColorStop(0.4, `hsla(${p.hue + 20}, 80%, 50%, ${p.opacity * 0.5})`);
+        grad.addColorStop(1,   `hsla(${p.hue + 40}, 70%, 40%, 0)`);
 
-        p.x += p.vx;
-        p.y += p.vy;
-        p.pulse += p.pulseSpeed;
-
-        // Soft boundary wrap
-        if (p.x < -20) p.x = W + 20;
-        if (p.x > W + 20) p.x = -20;
-        if (p.y < -20) p.y = H + 20;
-        if (p.y > H + 20) p.y = -20;
-
-        // Draw connections
-        for (let j = idx + 1; j < particles.length; j++) {
-          const q = particles[j];
-          const dx = p.x - q.x;
-          const dy = p.y - q.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < MAX_DIST) {
-            const alpha = (1 - dist / MAX_DIST) * 0.18;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = `rgba(${p.color},${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-          }
-        }
-
-        // Draw mouse connections
-        const mDist = Math.sqrt((p.x - mouse.x) ** 2 + (p.y - mouse.y) ** 2);
-        if (mDist < MOUSE_DIST) {
-          const alpha = (1 - mDist / MOUSE_DIST) * 0.25;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(6,182,212,${alpha})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-
-        // Draw dot
-        const pAlpha = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        glow.addColorStop(0, `rgba(${p.color},${pAlpha * 0.4})`);
-        glow.addColorStop(1, `rgba(${p.color},0)`);
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.color},${pAlpha})`;
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // Draw mouse dot
-      const mglow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 20);
-      mglow.addColorStop(0, 'rgba(6,182,212,0.15)');
-      mglow.addColorStop(1, 'rgba(6,182,212,0)');
-      ctx.beginPath();
-      ctx.arc(mouse.x, mouse.y, 20, 0, Math.PI * 2);
-      ctx.fillStyle = mglow;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(mouse.x, mouse.y, 2, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(6,182,212,0.6)';
-      ctx.fill();
-
-      // Draw sparks
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i];
-        s.t += s.speed;
-        if (s.t >= 1) { sparks.splice(i, 1); continue; }
-
-        const from = particles[s.fromIdx];
-        const to   = particles[s.toIdx];
-        const sx   = from.x + (to.x - from.x) * s.t;
-        const sy   = from.y + (to.y - from.y) * s.t;
-
-        // Trail
-        const trailT = Math.max(0, s.t - 0.18);
-        const tx = from.x + (to.x - from.x) * trailT;
-        const ty = from.y + (to.y - from.y) * trailT;
-
-        const grad = ctx.createLinearGradient(tx, ty, sx, sy);
-        grad.addColorStop(0, 'rgba(6,182,212,0)');
-        grad.addColorStop(1, 'rgba(6,182,212,0.9)');
-        ctx.beginPath();
-        ctx.moveTo(tx, ty);
-        ctx.lineTo(sx, sy);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Head
-        const hg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 6);
-        hg.addColorStop(0, 'rgba(6,182,212,0.9)');
-        hg.addColorStop(1, 'rgba(6,182,212,0)');
-        ctx.beginPath();
-        ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-        ctx.fillStyle = hg;
-        ctx.fill();
+      // ── NOISE DISPLACEMENT OVERLAY ────────────────────
+      // Scan a coarse grid and paint tiny noise-displaced dots
+      // to give a subtle organic grain to the gradient
+      const step = 80;
+      for (let gx = 0; gx < W; gx += step) {
+        for (let gy = 0; gy < H; gy += step) {
+          const n = noise(gx, gy, time);
+          if (n > 0.55) {
+            const nx = gx + n * 30;
+            const ny = gy + n * 30;
+            ctx.beginPath();
+            ctx.arc(nx, ny, 1, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(6,182,212,${(n - 0.55) * 0.15})`;
+            ctx.fill();
+          }
+        }
       }
 
-      // Subtle vignette
-      const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
-      vig.addColorStop(0, 'rgba(3,8,22,0)');
-      vig.addColorStop(1, 'rgba(3,8,22,0.65)');
-      ctx.fillStyle = vig;
+      // ── THIN SCANLINE EFFECT ──────────────────────────
+      // Very subtle horizontal lines for a screen-like feel
+      ctx.fillStyle = 'rgba(0,0,0,0.03)';
+      for (let y = 0; y < H; y += 3) {
+        ctx.fillRect(0, y, W, 1);
+      }
+
+      // ── CENTER DARKENING ──────────────────────────────
+      // Make text area more readable without killing the effect
+      const centerDark = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, H*0.55);
+      centerDark.addColorStop(0,   'rgba(3,7,20,0.45)');
+      centerDark.addColorStop(0.6, 'rgba(3,7,20,0.20)');
+      centerDark.addColorStop(1,   'rgba(3,7,20,0)');
+      ctx.fillStyle = centerDark;
       ctx.fillRect(0, 0, W, H);
 
-      // Spawn sparks
-      sparkTimer++;
-      if (sparkTimer % 35 === 0 && sparks.length < 8) spawnSpark();
+      // ── EDGE VIGNETTE ─────────────────────────────────
+      const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.9);
+      vig.addColorStop(0, 'rgba(3,7,20,0)');
+      vig.addColorStop(1, 'rgba(3,7,20,0.75)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
 
       animationId = requestAnimationFrame(draw);
     };
@@ -246,7 +165,6 @@ export function Hero() {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouse);
     };
   }, []);
 
@@ -255,7 +173,7 @@ export function Hero() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'rgb(3, 8, 22)' }}
+        style={{ background: 'rgb(3, 7, 20)' }}
       />
 
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent" />
