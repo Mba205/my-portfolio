@@ -85,7 +85,7 @@ export function Contact() {
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Livingstone College, Salisbury, NC',
+      value: 'Accra',
       href: null,
     },
   ];
