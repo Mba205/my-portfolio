@@ -121,7 +121,7 @@ export function Skills() {
     { name: 'AWS CLI', icon: Cloud, color: 'text-cyan-400' },
     { name: 'Python', icon: Code, color: 'text-purple-400' },
     { name: 'Metasploit', icon: Crosshair, color: 'text-cyan-400' },
-    { name: 'GuardDuty', icon: AlertTriangle, color: 'text-emerald-400' },
+    { name: 'Nessus', icon: AlertTriangle, color: 'text-emerald-400' },
     { name: 'Nmap', icon: Server, color: 'text-orange-400' },
     { name: 'Splunk', icon: Zap, color: 'text-purple-400' },
     { name: 'Git', icon: GitBranch, color: 'text-emerald-400' },
